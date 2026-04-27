@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+}
+
+@layer components {
+  /*
+  编辑器默认
+  */
+  .text-editor {
+    @apply prose prose-base;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+  }
+  ul {
+    margin: 0;
+  }
+  ol {
+    margin: 0;
+  }
+  p {
+    margin: 0;
+  }
+  table {
+    margin: 0;
+    /*max-width: 100%;*/
+  }
+
+}
+
+.Page {
+  @apply bg-white transform my-2 relative;
+  padding: 20mm;
+  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+}
+
+/* Apply .text-editor styles to .Page separately */
+.Page .text-editor {
+  @apply prose prose-base;
+}
+
+.corner {
+  @apply absolute h-10 w-10 bg-white;
+}
+
+.corner-top-left {
+  @apply left-10 top-10 border-r border-b border-solid;
+}
+
+.corner-top-right {
+  @apply top-10 right-10 border-l border-b border-solid;
+}
+
+.corner-bottom-left {
+  @apply bottom-10 left-10 border-r border-t border-solid;
+}
+
+.corner-bottom-right {
+  @apply bottom-10 right-10 border-l border-t border-solid;
+}
+
+@media print {
+  .Page {
+    page-break-after: auto;
+  }
+}
+
+p {
+  word-break: break-all;
+}
+
+p > img {
+  display: inline;
+}
+
+img.ProseMirror-separator {
+  display: inline !important;
+  border: none !important;
+  margin: 0 !important;
+}
+
+.has-focus {
+  border-radius: 1px;
+  box-shadow: 0 0 0 1px blue;
+}
+
+.mention {
+  @apply bg-blue-100 text-blue-800;
+}
+

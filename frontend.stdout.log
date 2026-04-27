@@ -1,0 +1,27 @@
+
+> cool-editor@0.1.0 serve
+> vite --host 127.0.0.1
+
+
+  [32m[1mVITE[22m v5.0.0[39m  [2mready in [0m[1m640[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m3000[22m/[39m
+
+╭── 🌼[35m daisyUI 3.9.4 [0mhttps://daisyui.com
+│
+├── [2m2[0m themes are enabled. How to add more themes:
+│   https://daisyui.com/docs/themes
+│
+╰── [32m💚 Support daisyUI project[0m: https://opencollective.com/daisyui
+
+
+╭── 🌼[35m daisyUI 3.9.4 [0mhttps://daisyui.com
+│
+├── [2m2[0m themes are enabled. How to add more themes:
+│   https://daisyui.com/docs/themes
+│
+╰── [32m⭐️ Star daisyUI project on GitHub[0m: https://github.com/saadeghi/daisyui
+
+[2m23:44:47[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/views/PageEditorDeflate.vue, /src/index.css[22m
+[2m23:44:56[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/views/PageEditorDeflate.vue, /src/index.css[22m
+[2m23:45:57[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/views/PageEditorDeflate.vue?vue&type=style&index=0&scoped=4a537efe&lang.css[22m

@@ -15,10 +15,6 @@ import Layout from "@/views/Layout/index.vue";
 import PublicPage from "@/views/PublicPage/index.vue";
 import OcrIndexComponent from "@/views/OcrIndexComponent.vue";
 import NewDocumentPage from "@/views/NewDocumentPage.vue";
-import ManagerPage from "../views/ManagerPage/index.vue";
-import VideoManagerPage from "../views/ManagerPage/VideoManagerPage.vue";
-import Ocr from "../views/ManagerPage/ocr.vue";
-import Ocrhistory from "../views/ManagerPage/history.vue";
 import VideoClassify from "../views/OcrIndexComponent.vue";
 export const isRememberMe: boolean = localStorage.getItem("isRemembered") == "1";
 const routes: Array<RouteRecordRaw> = [
@@ -170,29 +166,6 @@ const routes: Array<RouteRecordRaw> = [
         path: "/publicPage",
         name: "PublicPage",
         component: PublicPage
-      }
-    ]
-  },
-  {
-    path: "/managerPage",
-    name: "ManagerPage",
-    component: ManagerPage,
-    redirect: "/videoManagerPage",
-    children: [
-      {
-        path: "/videoManagerPage",
-        name: "VideoManagerPage",
-        component: VideoManagerPage
-      },
-      {
-        path: "/ocr",
-        name: "Ocr",
-        component: Ocr
-      },
-      {
-        path: "/ocrhistory",
-        name: "Ocrhistory",
-        component: Ocrhistory
       }
     ]
   },

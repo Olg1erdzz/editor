@@ -1,8 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --wx-workspace-bg: 241 243 246;
+    --wx-workspace-surface: 247 248 250;
+    --wx-workspace-shell: 255 255 255;
+    --wx-workspace-paper: 255 255 255;
+    --wx-workspace-border: 212 219 229;
+    --wx-workspace-grid: 226 232 240;
+    --wx-brand-indigo: 43 55 117;
+    --wx-brand-indigo-soft: 230 234 249;
+    --wx-brand-emerald: 0 112 91;
+    --wx-brand-emerald-soft: 219 245 239;
+    --wx-brand-accent: 55 91 210;
+    --wx-ink: 15 23 42;
+    --wx-ink-muted: 71 85 105;
+    --wx-ink-subtle: 100 116 139;
+    --wx-ink-faint: 148 163 184;
+  }
+
+  html {
+    font-family: theme("fontFamily.sans");
+    color: rgb(var(--wx-ink));
+    background: rgb(var(--wx-workspace-bg));
+    font-feature-settings: "cv02", "cv03", "cv04", "ss03";
+  }
+
+  body {
+    min-height: 100%;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.62)),
+      linear-gradient(90deg, rgba(var(--wx-workspace-grid), 0.32) 1px, transparent 1px),
+      linear-gradient(rgba(var(--wx-workspace-grid), 0.32) 1px, transparent 1px),
+      rgb(var(--wx-workspace-bg));
+    background-size: auto, 32px 32px, 32px 32px, auto;
+    letter-spacing: 0;
+    text-rendering: geometricPrecision;
+  }
+
+  ::selection {
+    background: rgba(var(--wx-brand-indigo), 0.2);
+    color: rgb(var(--wx-ink));
+  }
 }
 
 @layer components {
@@ -10,11 +53,17 @@
   编辑器默认
   */
   .text-editor {
-    @apply prose prose-base;
+    @apply prose prose-slate max-w-none;
+    color: rgb(var(--wx-ink));
+    font-family: theme("fontFamily.editor");
+    font-size: theme("fontSize.editor-body.0");
+    line-height: 1.78;
   }
 
   h1, h2, h3, h4, h5, h6 {
     margin: 0;
+    color: rgb(var(--wx-ink));
+    letter-spacing: 0;
   }
   ul {
     margin: 0;
@@ -33,18 +82,67 @@
 }
 
 .Page {
-  @apply bg-white transform my-2 relative;
+  @apply bg-workspace-paper relative my-8;
   padding: 20mm;
-  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+  border: 1px solid rgba(var(--wx-workspace-border), 0.78);
+  border-radius: theme("borderRadius.paper");
+  box-shadow: theme("boxShadow.paper");
+  color: rgb(var(--wx-ink));
 }
 
 /* Apply .text-editor styles to .Page separately */
 .Page .text-editor {
-  @apply prose prose-base;
+  @apply prose prose-slate max-w-none;
+}
+
+.PageContent,
+.ProseMirror {
+  color: rgb(var(--wx-ink));
+  font-family: theme("fontFamily.editor");
+  font-size: theme("fontSize.editor-body.0");
+  line-height: 1.78;
+}
+
+.ProseMirror {
+  outline: none;
+}
+
+.ProseMirror h1 {
+  font-size: theme("fontSize.editor-title.0");
+  line-height: 1.25;
+  font-weight: 750;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5rem;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.ProseMirror h3 {
+  font-size: 1.18rem;
+  line-height: 1.45;
+  font-weight: 650;
+}
+
+.ProseMirror table {
+  border-color: rgba(var(--wx-workspace-border), 0.9);
+}
+
+.ProseMirror th {
+  background: rgba(var(--wx-workspace-surface), 0.96);
+  color: rgb(var(--wx-ink));
+  font-weight: 650;
+}
+
+.ProseMirror td,
+.ProseMirror th {
+  border-color: rgba(var(--wx-workspace-border), 0.9);
 }
 
 .corner {
-  @apply absolute h-10 w-10 bg-white;
+  @apply absolute h-10 w-10 bg-workspace-paper;
+  border-color: rgba(var(--wx-workspace-border), 0.82);
 }
 
 .corner-top-left {
@@ -70,7 +168,8 @@
 }
 
 p {
-  word-break: break-all;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 p > img {
@@ -84,11 +183,147 @@ img.ProseMirror-separator {
 }
 
 .has-focus {
-  border-radius: 1px;
-  box-shadow: 0 0 0 1px blue;
+  border-radius: 2px;
+  box-shadow: 0 0 0 2px rgba(var(--wx-brand-indigo), 0.2);
 }
 
 .mention {
-  @apply bg-blue-100 text-blue-800;
+  @apply bg-brand-emerald-soft text-brand-emerald;
+  border-radius: 4px;
+  padding: 0 0.2em;
+}
+
+.collaboration-cursor__caret {
+  border-left-width: 2px !important;
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+
+.collaboration-cursor__label {
+  border-radius: 999px;
+  box-shadow: 0 10px 22px -16px rgba(15, 23, 42, 0.65);
+  font-family: theme("fontFamily.sans");
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1;
+  margin-left: -1px;
+  margin-top: -1.55em;
+  padding: 4px 7px;
+  letter-spacing: 0;
+}
+
+.ProseMirror-yjs-selection {
+  border-radius: 3px;
+  mix-blend-mode: multiply;
+}
+
+.custom-cursor {
+  position: relative;
+  border-left: 2px solid rgb(var(--wx-brand-emerald));
+  border-radius: 999px;
+  margin-left: -1px;
+  pointer-events: none;
+}
+
+.custom-cursor div {
+  position: absolute;
+  top: -1.65rem;
+  left: -1px;
+  width: max-content;
+  max-width: 160px;
+  overflow: hidden;
+  padding: 4px 8px;
+  border-radius: 999px;
+  color: #ffffff;
+  font-family: theme("fontFamily.sans");
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px -16px rgba(15, 23, 42, 0.65);
+}
+
+.el-popper.is-light,
+.el-picker__popper,
+.el-select__popper {
+  border: 1px solid rgba(var(--wx-workspace-border), 0.74) !important;
+  border-radius: theme("borderRadius.menu") !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  box-shadow: theme("boxShadow.dropdown") !important;
+  backdrop-filter: blur(16px);
+}
+
+.el-dropdown-menu,
+.el-menu--popup {
+  padding: 6px !important;
+  background: transparent !important;
+}
+
+.el-dropdown-menu__item {
+  border-radius: 7px;
+  color: rgb(var(--wx-ink-muted));
+  font-size: theme("fontSize.ui-sm.0");
+  letter-spacing: 0;
+}
+
+.el-dropdown-menu__item:not(.is-disabled):focus,
+.el-dropdown-menu__item:not(.is-disabled):hover {
+  background: rgba(var(--wx-brand-indigo-soft), 0.72) !important;
+  color: rgb(var(--wx-brand-indigo)) !important;
+}
+
+.el-dialog {
+  overflow: hidden;
+  border: 1px solid rgba(var(--wx-workspace-border), 0.7);
+  border-radius: theme("borderRadius.shell") !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: theme("boxShadow.glass") !important;
+  backdrop-filter: blur(18px);
+}
+
+.el-dialog__header {
+  margin: 0 !important;
+  padding: 18px 20px 10px !important;
+}
+
+.el-dialog__title {
+  color: rgb(var(--wx-ink));
+  font-size: theme("fontSize.ui-base.0");
+  font-weight: 700;
+}
+
+.el-dialog__body {
+  padding: 12px 20px 18px !important;
+  color: rgb(var(--wx-ink-muted));
+}
+
+.el-dialog__footer {
+  padding: 12px 20px 20px !important;
+}
+
+.el-button {
+  border-radius: 8px !important;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.el-button--primary {
+  border-color: rgb(var(--wx-brand-indigo)) !important;
+  background: rgb(var(--wx-brand-indigo)) !important;
+}
+
+.el-button--primary:hover {
+  border-color: rgb(var(--wx-brand-accent)) !important;
+  background: rgb(var(--wx-brand-accent)) !important;
+}
+
+.el-input__wrapper {
+  border-radius: 8px !important;
+  box-shadow: 0 0 0 1px rgba(var(--wx-workspace-border), 0.95) inset !important;
+}
+
+.el-input__wrapper.is-focus {
+  box-shadow: theme("boxShadow.focus"), 0 0 0 1px rgba(var(--wx-brand-indigo), 0.5) inset !important;
 }
 

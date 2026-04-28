@@ -1,127 +1,105 @@
 <template>
-  <div class="main">
+  <div class="file-tools-shell">
     <v-style>
       body { box-shadow: none; }
-      ::selection { background-color: rgb(186, 212, 253); }
+      ::selection { background-color: rgba(var(--wx-brand-indigo), 0.2); color: rgb(var(--wx-ink)); }
       :root {
-        --demo-font-color: #222;
-        --demo-bars-bkg: rgb(255, 255, 255);
-        --demo-bars-shadow: 0 1px 3px 1px rgba(60, 64, 67, 0.15);
-        --demo-bars-padding: 5px;
-        --demo-bars-border-radius: 1px;
+        --demo-font-color: rgb(var(--wx-ink));
+        --demo-bars-bkg: rgba(255, 255, 255, 0.62);
+        --demo-bars-shadow: none;
+        --demo-bars-padding: 3px;
+        --demo-bars-border-radius: 10px;
         --demo-text-bkg-color: white;
-        --demo-text-box-shadow: 0 1px 3px 1px rgba(60, 64, 67, 0.15);
-        --bar-font-color: rgb(32, 33, 36);
-        --bar-font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
-        --bar-font-size: 15px;
-        --bar-font-weight: 500;
-        --bar-letter-spacing: 0.2px;
-        --bar-padding: 3px;
-        --bar-button-icon-size: 20px;
-        --bar-button-padding: 4px 6px;
-        --bar-button-radius: 4px;
-        --bar-button-hover-bkg: rgb(241, 243, 244);
-        --bar-button-active-color: rgb(26, 115, 232);
-        --bar-button-active-bkg: rgb(232, 240, 254);
-        --bar-button-open-color: rgb(32, 33, 36);
-        --bar-button-open-bkg: rgb(232, 240, 254);
-        --bar-menu-bkg: white;
-        --bar-menu-border-radius: 0 0 3px 3px;
-        --bar-menu-item-chevron-margin: 0;
-        --bar-menu-item-hover-bkg: rgb(241, 243, 244);
-        --bar-menu-item-padding: 5px 8px 5px 35px;
-        --bar-menu-item-icon-size: 15px;
-        --bar-menu-item-icon-margin: 0 9px 0 -25px;
-        --bar-menu-padding: 6px 1px;
-        --bar-menu-shadow: 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+        --demo-text-box-shadow: none;
+        --bar-font-color: rgb(var(--wx-ink-muted));
+        --bar-font-family: Geist, "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
+        --bar-font-size: 13px;
+        --bar-font-weight: 650;
+        --bar-letter-spacing: 0px;
+        --bar-padding: 2px;
+        --bar-button-icon-size: 18px;
+        --bar-button-padding: 6px 8px;
+        --bar-button-radius: 8px;
+        --bar-button-hover-bkg: rgba(var(--wx-workspace-surface), 0.96);
+        --bar-button-active-color: rgb(var(--wx-brand-indigo));
+        --bar-button-active-bkg: rgba(var(--wx-brand-indigo-soft), 0.82);
+        --bar-button-open-color: rgb(var(--wx-ink));
+        --bar-button-open-bkg: rgba(var(--wx-workspace-surface), 0.96);
+        --bar-menu-bkg: rgba(255, 255, 255, 0.88);
+        --bar-menu-border-radius: 10px;
+        --bar-menu-item-hover-bkg: rgba(var(--wx-brand-indigo-soft), 0.68);
+        --bar-menu-item-padding: 7px 12px 7px 32px;
+        --bar-menu-item-icon-size: 16px;
+        --bar-menu-item-icon-margin: 0 12px 0 -24px;
+        --bar-menu-padding: 8px 0;
+        --bar-menu-shadow: 0 18px 42px -30px rgba(15, 23, 42, 0.48), 0 0 0 1px rgba(15, 23, 42, 0.08);
         --bar-menu-separator-height: 1px;
-        --bar-menu-separator-margin: 5px 0 5px 34px;
-        --bar-menu-separator-color: rgb(227, 229, 233);
-        --bar-separator-color: rgb(218, 220, 224);
+        --bar-menu-separator-margin: 4px 0 4px 32px;
+        --bar-menu-separator-color: rgba(var(--wx-workspace-border), 0.74);
+        --bar-separator-color: rgba(var(--wx-workspace-border), 0.88);
         --bar-separator-width: 1px;
-        --bar-sub-menu-border-radius: 3px;
+        --bar-sub-menu-border-radius: 10px;
       }
-      .bars > .bar:first-child {
-        border-bottom: 1px solid rgb(218, 220, 224);
-        margin-bottom: 3px;
+      .bars > .bar {
+        border-bottom: none !important;
+        margin-bottom: 0;
+        border-radius: 10px;
+        background: transparent;
       }
       .bars {
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
+        gap: 6px;
       }
     </v-style>
-    <div class="bars">
-      <vue-file-toolbar-menu
-        v-for="(content, index) in bars_content"
-        :key="'bar-' + index"
-        :content="content"
-        :editor="editor"
-      />
-      <LinkButton
-      :editor="editor"
-      :ifNoMindMap="ifNoMindMap"
-      :document="document"
-      @update-data="handleUpdateData"
-      @record-button-clicked="showRecord"
-      @create-mindmap="loadingMindMap"
-      @open-chartsdialog="openChartsDialog"
-      @open-success="openSuccess"
-      ></LinkButton>
+    <div class="toolbar-layout">
+      <div class="contextual-toolbar bars" aria-label="编辑工具栏">
+        <vue-file-toolbar-menu
+          v-for="(content, index) in bars_content"
+          :key="'bar-' + index"
+          :content="content"
+          :editor="editor"
+        />
+        <LinkButton
+          :editor="editor"
+          :ifNoMindMap="ifNoMindMap"
+          :document="document"
+          @update-data="handleUpdateData"
+          @record-button-clicked="showRecord"
+          @create-mindmap="loadingMindMap"
+          @open-chartsdialog="openChartsDialog"
+          @open-success="openSuccess"
+        ></LinkButton>
+      </div>
 
-      <Menu as="div" class="ml-3 relative inline-block text-left absolute -right-">
-        <div>
-          <MenuButton class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-            Options
-            <ChevronDownIcon class="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
-          </MenuButton>
+      <div class="mode-console" aria-label="工作模式">
+        <div class="mode-segment">
+          <button type="button" :class="{ active: activeMode === 1 }" @click="setMode(1)">
+            <svg-icon name="编辑 (1)"></svg-icon>
+            <span>编辑</span>
+          </button>
+          <button type="button" :class="{ active: activeMode === 3 }" @click="setMode(3)">
+            <svg-icon name="问答"></svg-icon>
+            <span>问答</span>
+          </button>
         </div>
-
-        <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-          <MenuItems class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <div class="py-1">
-              <MenuItem v-slot="{ active }" @click="this.$emit('set-mode', 1)">
-
-
-                  <div :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'px-4 py-2 text-sm items-center flex']">
-                    <svg-icon name="编辑 (1)" class="mr-2"></svg-icon>
-                    编辑模式
-                  </div>
-              </MenuItem>
-              <!-- <MenuItem v-slot="{ active }" @click="this.$emit('set-editing', 2)">
-                <div :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">批注模式</div>
-              </MenuItem> -->
-              <MenuItem v-slot="{ active }" @click="this.$emit('set-mode', 3)">
-                <div :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', ' px-4 py-2 text-sm items-center flex']">
-                  <svg-icon name="问答" class="mr-2"></svg-icon>
-                  知识库问答模式
-                </div>
-              </MenuItem>
-            </div>
-          </MenuItems>
-        </transition>
-      </Menu>
-      <div class="absolute right-9" >
-        <el-switch
-        v-model="isVideoMode"
-        active-color="#6A64F1"
-        inactive-color="#ff4949"
-        @change="handleSwitchChange(isVideoMode)"
-        inline-prompt
-        :active-icon="Check"
-        :inactive-icon="Close"
-      ></el-switch>
+        <button type="button" class="video-toggle" :class="{ active: isVideoMode }" @click="toggleVideoMode">
+          <span class="video-dot"></span>
+          <span>视频</span>
+        </button>
       </div>
     </div>
+
     <!-- 新建文档对话框 -->
-    <el-dialog title="新建文档" v-model="dialogVisible" width="30%">
+    <el-dialog title="新建文档" v-model="dialogVisible" width="420px">
       <el-input v-model="newDocumentName" placeholder="请输入文档名称"></el-input>
       <template #footer>
         <el-button @click="dialogVisible = false">取消</el-button>
         <el-button type="primary" @click="createNewDocument">创建</el-button>
       </template>
     </el-dialog>
-    <el-dialog title="上传模版" v-model="dialogVisible1" width="30%" >
+    <el-dialog title="上传模版" v-model="dialogVisible1" width="420px" >
       <el-input v-model="newStenciltName" placeholder="请输入模版名称"></el-input>
       <el-input v-model="newStencilLabel" placeholder="请输入模版标签"></el-input>
       <el-input v-model="newStencilDescription" placeholder="请输入模版简介"></el-input>
@@ -135,23 +113,17 @@
 
 <script>
 import VueFileToolbarMenu from "vue-file-toolbar-menu";
-import DemoCustomButton from "./DemoCustomButton.vue";
-import DemoCustomMenuItem from "./DemoCustomMenuItem.vue";
 import { Editor } from "@tiptap/vue-3";
-import { undo } from "y-prosemirror";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import LinkButton from "./LinkButton.vue";
-import { Check, Close } from '@element-plus/icons-vue'
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 export default {
   name:"FileTools",
-  components: { VueFileToolbarMenu, LinkButton, Check, Close, Menu, MenuButton, MenuItem, MenuItems, ChevronDownIcon},
+  components: { VueFileToolbarMenu, LinkButton },
   props: {
     document: {
       type: Object,
-      required: true
+      default: null
     },
     editor: {
       type: Editor,
@@ -167,10 +139,11 @@ export default {
   },
   data() {
     return {
-      color: "rgb(74, 238, 164)",
-      font: "Avenir",
+      color: "#2b3775",
+      font: "Geist",
       theme: "default",
       edit_mode: true,
+      activeMode: 1,
       check1: false,
       check2: false,
       check3: true,
@@ -197,6 +170,14 @@ export default {
     handleSwitchChange(value) {
       console.log("切换");
       this.$emit('video-mode-change', value);
+    },
+    setMode(mode) {
+      this.activeMode = mode;
+      this.$emit('set-mode', mode);
+    },
+    toggleVideoMode() {
+      this.isVideoMode = !this.isVideoMode;
+      this.handleSwitchChange(this.isVideoMode);
     },
     showRecord() {
       console.log("接收录音事件");
@@ -344,139 +325,94 @@ export default {
     }
   },
   computed: {
-    // Read the API documentation about the available menu content options
     bars_content() {
-      return [
-        [
-          {
-            text: "文件",
-            menu: [
-              {
-                text: "新建",
-                click: () => {
-                  this.dialogVisible = true; // 打开新建文档对话框
-                }
-              },
-              { is: "separator" },
-              {
-                text: "保存",
-                click: () => {
-                  console.log(this.editor.getHTML());
-                  this.context = this.editor.getHTML();
-                  this.saveDocument(); // 调用保存文档的功能
-                }
-              },
-              { is: "separator" },
-              {
-                text: "上传为模版",
-                click: () => {
-                  console.log(this.editor.getHTML());
-                  this.context = this.editor.getHTML();
-                  this.dialogVisible1 = true;
-                  // this.upload_stencil(); // 调用上传文档功能
-                }
-              },
-              { is: "separator" },
-              {
-                text: "打印",
-                click: () => {
-                  console.log("New Print!");
-                }
-              },
-              { is: "separator" },
-              {
-                text: "关闭",
-                click: () => {
-                  this.router.push("/"); // 跳转到主页面
-                  console.log("Close and navigate to home page");
-                }
-              }
-            ]
-          },
-          {
-            icon: "undo",
-            click: () => {
-              // 执行撤回操作
-              if (this.editor.can().undo()) {
-                this.editor.commands.undo();
-                console.log("Undo last action!");
-              }
-            }
-          },
-          {
-            icon: "redo",
-            click: () => {
-              // 执行重做操作
-              if (this.editor.can().redo()) {
-                this.editor.commands.redo();
-                console.log("Redo last action!");
-              }
-            },
-          },
+      const fileGroup = [
         {
-          text: "-",
-          click: () => {
-            const textStyle = this.editor.getAttributes('textStyle');
-            if (textStyle && textStyle.fontSize) {
-              const currentSize = parseInt(textStyle.fontSize.replace('px', ''));
-              const newSize = currentSize - 2;
-              if (newSize > 0) { // 防止字体大小变成负数
-                this.editor.chain().focus().setFontSize(`${newSize}pt`).run();
-              }
-            }
-          }
-        },
-        {
-          html: "<div>字体大小</div>",
-          title: "字体大小",
-          chevron: true,
+          text: "文件",
           menu: [
             {
-              html: "<b>12px</b>",
-              title: "12px",
+              text: "新建",
               click: () => {
-                this.editor.chain().focus().setFontSize('12px').run();
+                this.dialogVisible = true;
+              }
+            },
+            { is: "separator" },
+            {
+              text: "保存",
+              click: () => {
+                this.context = this.editor.getHTML();
+                this.saveDocument();
               }
             },
             {
-              html: "<b>14px</b>",
-              title: "14px",
+              text: "上传为模版",
               click: () => {
-                this.editor.chain().focus().setFontSize('14px').run();
+                this.context = this.editor.getHTML();
+                this.dialogVisible1 = true;
+              }
+            },
+            { is: "separator" },
+            {
+              text: "打印",
+              click: () => {
+                window.print();
               }
             },
             {
-              html: "<b>16px</b>",
-              title: "16px",
+              text: "关闭",
               click: () => {
-                this.editor.chain().focus().setFontSize('16px').run();
-              }
-            },
-            {
-              html: "<b>18px</b>",
-              title: "18px",
-              click: () => {
-                this.editor.chain().focus().setFontSize('18px').run();
-              }
-            },
-            {
-              html: "<b>20px</b>",
-              title: "20px",
-              click: () => {
-                this.editor.chain().focus().setFontSize('20px').run();
+                this.router.push("/");
               }
             }
           ]
         },
         {
-          text: "+",
+          icon: "undo",
+          title: "撤销",
           click: () => {
-            const textStyle = this.editor.getAttributes('textStyle');
-            if (textStyle && textStyle.fontSize) {
-              const currentSize = parseInt(textStyle.fontSize.replace('px', ''));
-              const newSize = currentSize + 2;
-              this.editor.chain().focus().setFontSize(`${newSize}pt`).run();
+            if (this.editor.can().undo()) this.editor.commands.undo();
+          }
+        },
+        {
+          icon: "redo",
+          title: "重做",
+          click: () => {
+            if (this.editor.can().redo()) this.editor.commands.redo();
+          }
+        }
+      ];
+
+      const typographyGroup = [
+        {
+          text: "-",
+          title: "缩小字号",
+          click: () => {
+            const textStyle = this.editor.getAttributes("textStyle");
+            const currentSize = parseInt((textStyle.fontSize || "14px").replace("px", ""), 10);
+            const newSize = Math.max(currentSize - 2, 8);
+            this.editor.chain().focus().setFontSize(`${newSize}px`).run();
+          }
+        },
+        {
+          html: "<span>字号</span>",
+          title: "字体大小",
+          chevron: true,
+          menu: [12, 14, 16, 18, 20, 24].map((size) => ({
+            html: `<b>${size}px</b>`,
+            title: `${size}px`,
+            click: () => {
+              this.editor.chain().focus().setFontSize(`${size}px`).run();
             }
+          }))
+        },
+        {
+          text: "+",
+          title: "放大字号",
+          click: () => {
+            const textStyle = this.editor.getAttributes("textStyle");
+            const currentSize = parseInt((textStyle.fontSize || "14px").replace("px", ""), 10);
+            const newSize = Math.min(currentSize + 2, 72);
+            this.editor.chain().focus().setFontSize(`${newSize}px`).run();
           }
         },
         {
@@ -485,43 +421,36 @@ export default {
           chevron: true,
           menu: [
             {
-              html: "<b>Inter</b>",
-              title: "Inter",
+              html: "<b>Geist</b>",
+              title: "Geist",
               click: () => {
-                this.editor.chain().focus().setFontFamily('Inter').run();
+                this.editor.chain().focus().setFontFamily("Geist").run();
               }
             },
             {
-              html: "<b>Comic Sans</b>",
-              title: "Comic Sans",
+              html: "<b>黑体</b>",
+              title: "黑体",
               click: () => {
-                this.editor.chain().focus().setFontFamily('Comic Sans MS, Comic Sans').run();
+                this.editor.chain().focus().setFontFamily("SimHei, Microsoft YaHei").run();
               }
             },
             {
-              html: "<b>Serif</b>",
-              title: "Serif",
+              html: "<b>宋体</b>",
+              title: "宋体",
               click: () => {
-                this.editor.chain().focus().setFontFamily('serif').run();
+                this.editor.chain().focus().setFontFamily("SimSun, Songti SC, serif").run();
               }
             },
             {
               html: "<b>Monospace</b>",
               title: "Monospace",
               click: () => {
-                this.editor.chain().focus().setFontFamily('monospace').run();
+                this.editor.chain().focus().setFontFamily("Geist Mono, monospace").run();
               }
             },
             {
-              html: "<b>Cursive</b>",
-              title: "Cursive",
-              click: () => {
-                this.editor.chain().focus().setFontFamily('cursive').run();
-              }
-            },
-            {
-              html: "<b>Unset font family</b>",
-              title: "Unset font family",
+              html: "<b>默认字体</b>",
+              title: "默认字体",
               click: () => {
                 this.editor.chain().focus().unsetFontFamily().run();
               }
@@ -529,92 +458,171 @@ export default {
           ]
         },
         {
-            html: "<span>行间距</span>",
-            title: "行间距",
-            chevron: true,
-            menu: [
-              {
-                html: "<b>行间距 1</b>",
-                title: "行间距 1",
-                click: () => {
-                  this.editor.chain().focus().setLineHeight("1").run();
-                }
-              },
-              {
-                html: "<b>行间距 1.5</b>",
-                title: "行间距 1.5",
-                click: () => {
-                  this.editor.chain().focus().setLineHeight("1.5").run();
-                }
-              },
-              {
-                html: "<b>行间距 2</b>",
-                title: "行间距 2",
-                click: () => {
-                  this.editor.chain().focus().setLineHeight("2").run();
-                }
-              }
-              // 添加更多样式...
-            ]
-          },
-          { is: "separator" },
+          html: "<b>标题</b>",
+          title: "标题",
+          chevron: true,
+          menu: [1, 2, 3, 4, 5, 6].map((level) => ({
+            html: `<b>标题 H${level}</b>`,
+            title: `标题 ${level}`,
+            click: () => {
+              this.editor.chain().focus().toggleHeading({ level }).run();
+            }
+          }))
+        },
+        { is: "separator" },
+        {
+          icon: "format_bold",
+          title: "加粗",
+          click: () => {
+            this.editor.chain().focus().toggleBold().run();
+          }
+        },
+        {
+          icon: "format_italic",
+          title: "斜体",
+          click: () => {
+            this.editor.chain().focus().toggleItalic().run();
+          }
+        },
+        {
+          icon: "format_underline",
+          title: "下划线",
+          click: () => {
+            this.editor.chain().focus().toggleUnderline().run();
+          }
+        },
+        {
+          icon: "format_strikethrough",
+          title: "中划线",
+          click: () => {
+            this.editor.chain().focus().toggleStrike().run();
+          }
+        },
+        {
+          is: "button-color",
+          type: "compact",
+          menu_class: "align-center",
+          stay_open: false,
+          color: this.color,
+          update_color: (new_color) => {
+            this.editor.chain().focus().setColor(new_color.hex).run();
+          }
+        },
+        {
+          is: "button-color",
+          type: "compact",
+          menu_class: "align-center",
+          stay_open: false,
+          color: this.color,
+          update_color: (new_color) => {
+            this.editor.chain().focus().toggleHighlight({ color: new_color.hex }).run();
+          }
+        }
+      ];
 
-          {
-            icon: "format_align_left",
-            title: "左对齐",
-            click: () => {
-              this.editor.chain().focus().setTextAlign("left").run();
+      const paragraphGroup = [
+        {
+          html: "<span>行距</span>",
+          title: "行间距",
+          chevron: true,
+          menu: [
+            {
+              html: "<b>行间距 1</b>",
+              title: "行间距 1",
+              click: () => {
+                this.editor.chain().focus().setLineHeight("1").run();
+              }
+            },
+            {
+              html: "<b>行间距 1.5</b>",
+              title: "行间距 1.5",
+              click: () => {
+                this.editor.chain().focus().setLineHeight("1.5").run();
+              }
+            },
+            {
+              html: "<b>行间距 2</b>",
+              title: "行间距 2",
+              click: () => {
+                this.editor.chain().focus().setLineHeight("2").run();
+              }
             }
-          },
-          {
-            icon: "format_align_center",
-            title: "居中",
-            click: () => {
-              this.editor.chain().focus().setTextAlign("center").run();
-            }
-          },
-          {
-            icon: "format_align_right",
-            title: "右对齐",
-            click: () => {
-              this.editor.chain().focus().setTextAlign("right").run();
-            }
-          },
-          {
-            icon: "format_align_justify",
-            title: "两端对齐",
-            click: () => {
-              this.editor.chain().focus().setTextAlign("justify").run();
-            }
-          },
-          { is: "separator" },
-          {
-            icon: "table_view",
-            title: "表格",
-            menu: [
-              {
-                text: "表格",
-                menu: [
-                  {
-                    text: "固定表格",
-                    click: () => {
-                      this.editor.chain().focus().fixTables().run();
-                    }
-                  },
-                  {
-                    text: "插入表格",
-                    click: () => {
-                      this.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: false }).run();
-                    }
-                  },
-                  {
-                    text: "删除表",
-                    click: () => {
-                      this.editor.chain().focus().deleteTable().run();
-                    }
+          ]
+        },
+        { is: "separator" },
+        {
+          icon: "format_align_left",
+          title: "左对齐",
+          click: () => {
+            this.editor.chain().focus().setTextAlign("left").run();
+          }
+        },
+        {
+          icon: "format_align_center",
+          title: "居中",
+          click: () => {
+            this.editor.chain().focus().setTextAlign("center").run();
+          }
+        },
+        {
+          icon: "format_align_right",
+          title: "右对齐",
+          click: () => {
+            this.editor.chain().focus().setTextAlign("right").run();
+          }
+        },
+        {
+          icon: "format_align_justify",
+          title: "两端对齐",
+          click: () => {
+            this.editor.chain().focus().setTextAlign("justify").run();
+          }
+        },
+        { is: "separator" },
+        {
+          icon: "format_list_numbered",
+          title: "编号列表",
+          click: () => {
+            this.editor.chain().focus().toggleOrderedList().run();
+          }
+        },
+        {
+          icon: "format_list_bulleted",
+          title: "符号列表",
+          click: () => {
+            this.editor.chain().focus().toggleBulletList().run();
+          }
+        }
+      ];
+
+      const insertGroup = [
+        {
+          icon: "table_view",
+          title: "表格",
+          menu: [
+            {
+              text: "表格",
+              menu: [
+                {
+                  text: "固定表格",
+                  click: () => {
+                    this.editor.chain().focus().fixTables().run();
                   }
-                ]
-              },
+                },
+                {
+                  text: "插入表格",
+                  click: () => {
+                    this.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: false }).run();
+                  }
+                },
+                {
+                  text: "删除表",
+                  click: () => {
+                    this.editor.chain().focus().deleteTable().run();
+                  }
+                }
+              ]
+            },
               {
                 text: "表头",
                 menu: [
@@ -679,7 +687,7 @@ export default {
                   {
                     text: "删除行",
                     click: () => {
-                      this.editor.chain().focus().deleteRow.run();
+                      this.editor.chain().focus().deleteRow().run();
                     }
                   }
                 ]
@@ -720,172 +728,173 @@ export default {
                 ]
               }
             ]
-          },
-          {
-            icon: "format_list_numbered",
-            title: "编号列表",
-            click: () => {
-              this.editor.chain().focus().toggleOrderedList().run();
-            }
-          },
-          {
-            icon: "format_list_bulleted",
-            title: "符号列表",
-            click: () => {
-              this.editor.chain().focus().toggleBulletList().run();
-            }
-          },
-          { is: "separator" },
-          {
-            icon: "format_bold",
-            title: "加粗",
-            click: () => {
-              this.editor.chain().focus().toggleBold().run();
-            }
-          },
-          {
-            icon: "format_italic",
-            title: "斜体",
-            click: () => {
-              this.editor.chain().focus().toggleItalic().run();
-            }
-          },
-          {
-            icon: "format_underline",
-            title: "下划线",
-            click: () => {
-              this.editor.chain().focus().toggleUnderline().run();
-            }
-          },
-          {
-            icon: "format_strikethrough",
-            title: "中划线",
-            click: () => {
-              this.editor.chain().focus().toggleStrike().run();
-            }
-          },
-          {
-            is: "button-color",
-            type: "compact",
-            menu_class: "align-center",
-            stay_open: false,
-            color: this.color,
-            update_color: (new_color) => {
-              this.editor.chain().focus().setColor(new_color.hex).run();
-            }
-          },
-          {
-            is: "button-color",
-            type: "compact",
-            menu_class: "align-center",
-            stay_open: false,
-            color: this.color,
-            update_color: (new_color) => {
-              this.editor.chain().focus().toggleHighlight({ color: new_color.hex }).run();
-            }
-          },
-          { is: "separator" },
-          { is: DemoCustomButton, text: "自定义按钮", click: () => alert("Your custom action!") },
-          { is: "separator" },
-          {
-            html: "<b>标题</b>",
-            title: "标题",
-            chevron: true,
-            menu: [
-              {
-                html: "<b>标题 H1</b>",
-                title: "标题 1",
-                click: () => {
-                  this.editor.chain().focus().toggleHeading({ level: 1 }).run();
-                }
-              },
-              {
-                html: "<b>标题 H2</b>",
-                title: "标题 2",
-                click: () => {
-                  this.editor.chain().focus().toggleHeading({ level: 2 }).run();
-                }
-              },
-              {
-                html: "<b>标题 H3</b>",
-                title: "标题 H3",
-                click: () => {
-                  this.editor.chain().focus().toggleHeading({ level: 3 }).run();
-                }
-              },
-              {
-                html: "<b>标题 H4</b>",
-                title: "标题 H4",
-                click: () => {
-                  this.editor.chain().focus().toggleHeading({ level: 4 }).run();
-                }
-              },
-              {
-                html: "<b>标题 H5</b>",
-                title: "标题 H5",
-                click: () => {
-                  this.editor.chain().focus().toggleHeading({ level: 5 }).run();
-                }
-              },
-              {
-                html: "<b>标题 H6</b>",
-                title: "标题 H6",
-                click: () => {
-                  this.editor.chain().focus().toggleHeading({ level: 6 }).run();
-                }
-              }
-            ]
-          },
-          // {is: LinkButton},
-          {
-            icon: this.edit_mode ? "lock_open" : "lock",
-            title: "切换模式",
-            active: !this.edit_mode,
-            click: () => {
-              this.edit_mode = !this.edit_mode;
-              this.editor.setEditable(this.edit_mode);
-            }
-          }
-        ]
+        }
       ];
+
+      const documentGroup = [
+        {
+          icon: this.edit_mode ? "lock_open" : "lock",
+          title: "切换只读",
+          active: !this.edit_mode,
+          click: () => {
+            this.edit_mode = !this.edit_mode;
+            this.editor.setEditable(this.edit_mode);
+          }
+        }
+      ];
+
+      return [fileGroup, typographyGroup, paragraphGroup, insertGroup, documentGroup];
     }
   }
 };
 </script>
 
-<style>
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap");
-:root {
-  --demo-font-color: rgb(74, 238, 164);
-}
-::selection {
-  background-color: rgba(74, 238, 164, 0.2);
-}
-</style>
-
 <style scoped>
 a {
   color: inherit;
 }
-svg.github {
-  fill: var(--demo-font-color);
-  margin-right: 5px;
+
+.file-tools-shell {
+  width: 100%;
+  color: rgb(var(--wx-ink));
+  font-family: var(--font-geist, "Geist"), "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
 }
 
-.main {
+.toolbar-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
   width: 100%;
-  height: 100%;
+  min-height: 50px;
 }
+
+.contextual-toolbar {
+  min-width: 0;
+  overflow-x: auto;
+  border: 1px solid rgba(var(--wx-workspace-border), 0.72);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 14px 36px -30px rgba(15, 23, 42, 0.58);
+  padding: 5px;
+  backdrop-filter: blur(18px);
+}
+
 .bars {
   background-color: var(--demo-bars-bkg, white);
   border-radius: var(--demo-bars-border-radius, 5px);
-  box-shadow: var(--demo-bars-shadow, 0 0 20px black);
+  box-shadow: var(--demo-bars-shadow, none);
   padding: var(--demo-bars-padding, 8px);
-  transition: 0.5s;
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
+
 ::v-deep(.bars) * {
-  transition: font-size 0.1s linear, padding 0.1s linear, margin 0.1s linear;
+  letter-spacing: 0;
+  transition: background 140ms ease, color 140ms ease, box-shadow 140ms ease;
 }
+
+::v-deep(.bar) {
+  border-right: 1px solid rgba(var(--wx-workspace-border), 0.72);
+  padding-right: 6px;
+}
+
+::v-deep(.bar:last-child) {
+  border-right: 0;
+  padding-right: 0;
+}
+
+::v-deep(.bar-button),
+::v-deep(.bar select) {
+  min-height: 32px;
+}
+
+::v-deep(.bar-menu) {
+  border: 1px solid rgba(var(--wx-workspace-border), 0.7);
+  backdrop-filter: blur(16px);
+}
+
+.mode-console {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.mode-segment {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 4px;
+  border: 1px solid rgba(var(--wx-workspace-border), 0.76);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow: 0 14px 36px -32px rgba(15, 23, 42, 0.62);
+  backdrop-filter: blur(18px);
+}
+
+.mode-segment button,
+.video-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 32px;
+  border-radius: 8px;
+  color: rgb(var(--wx-ink-muted));
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  transition: background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+
+.mode-segment button {
+  padding: 0 10px;
+}
+
+.mode-segment svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mode-segment button.active {
+  background: rgb(var(--wx-brand-indigo));
+  color: #ffffff;
+  box-shadow: 0 12px 22px -18px rgba(43, 55, 117, 0.9);
+}
+
+.mode-segment button:not(.active):hover,
+.video-toggle:hover {
+  background: rgba(var(--wx-workspace-surface), 0.96);
+  color: rgb(var(--wx-ink));
+}
+
+.video-toggle {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgba(var(--wx-workspace-border), 0.76);
+  background: rgba(255, 255, 255, 0.66);
+  box-shadow: 0 14px 36px -32px rgba(15, 23, 42, 0.62);
+  backdrop-filter: blur(18px);
+}
+
+.video-toggle.active {
+  border-color: rgba(var(--wx-brand-emerald), 0.36);
+  background: rgba(var(--wx-brand-emerald-soft), 0.86);
+  color: rgb(var(--wx-brand-emerald));
+}
+
+.video-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgb(var(--wx-ink-faint));
+}
+
+.video-toggle.active .video-dot {
+  background: rgb(var(--wx-brand-emerald));
+  box-shadow: 0 0 0 4px rgba(var(--wx-brand-emerald), 0.12);
+}
+
 .line-height-1 {
   line-height: 1;
 }
@@ -894,5 +903,16 @@ svg.github {
 }
 .line-height-2 {
   line-height: 2;
+}
+
+@media (max-width: 980px) {
+  .toolbar-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .mode-console {
+    justify-content: space-between;
+    width: 100%;
+  }
 }
 </style>

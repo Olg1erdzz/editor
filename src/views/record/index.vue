@@ -437,16 +437,17 @@ methods: {
             'Content-Type': 'multipart/form-data'
           }
         });
-        console.log(uploadResponse);
-        const id = uploadResponse.Id[0];
-        const transcription = uploadResponse.ie_result; // 假设后端返回的文字信息在 transcription 字段
+        const responseData = uploadResponse && uploadResponse.data && uploadResponse.data.hwdata !== undefined ? uploadResponse.data.hwdata : uploadResponse;
+        console.log(responseData);
+        const id = Array.isArray(responseData.Id) ? responseData.Id[0] : responseData.id;
+        const transcription = responseData.ie_result; // 假设后端返回的文字信息在 transcription 字段
         const currentTime = new Date().toLocaleString(); // 获取当前时间
 
             // 发送事件
         this.$emit('transcription-uploaded', { id, transcription, currentTime, name });
 
         console.log("上传成功");
-        console.log(uploadResponse);
+        console.log(responseData);
         // this.transcription = uploadResponse.transcription; // 假设后端返回的文字信息在 transcription 字段
       } catch (error) {
         console.log("上传失败");

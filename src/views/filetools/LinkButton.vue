@@ -52,7 +52,7 @@
             </button>
           </MenuItem>
           <MenuItem v-slot="{ active }">
-            <button type="button" :class="['ai-links-action', { 'is-active': active }]" @click="openModalAndSetAcceptedFileTypes('audio/mp3,audio/wav')">
+            <button type="button" :class="['ai-links-action', { 'is-active': active }]" @click="openModalAndSetAcceptedFileTypes('audio/*,.mp3,.wav,.m4a,.ogg,.webm')">
               <svg-icon name="声音-音乐" class="ai-links-icon small"></svg-icon>
               <span>音频文件</span>
             </button>
@@ -369,7 +369,21 @@ methods: {
     }
   },
 
-  // 上传图片/pdf
+  normalizeHwData(response) {
+    return response && response.data && response.data.hwdata !== undefined ? response.data.hwdata : response;
+  },
+
+  resolveReturnedId(data) {
+    if (Array.isArray(data)) {
+      return data[0];
+    }
+    if (data && Array.isArray(data.Id)) {
+      return data.Id[0];
+    }
+    return data && (data.id || data.Id);
+  },
+
+  // 上传图片/PDF/音频
   async uploadFile(file, index) {
     const base64 = await this.fileToBase64(file.file);
     console.log(file);
@@ -378,15 +392,22 @@ methods: {
     const username = localStorage.getItem("userName") || "unknown_user";
     const file_name = this.document.title; // 从 props 获取当前文档名称
     const time = new Date();
-    // Determine the endpoint and the content to send based on the acceptedFileTypes
     let endpoint = '';
-    if (this.acceptedFileTypes === '.pdf') {
+    const isPdf = this.acceptedFileTypes === '.pdf' || file.file.type === 'application/pdf';
+    const isAudio = file.file.type.startsWith('audio/') || this.acceptedFileTypes.startsWith('audio');
+    if (isPdf) {
       console.log("上传pdf");
       endpoint = 'http://127.0.0.1:5000/api/pdf_upload';
       formData.append('username', username); // Replace with the actual username
       formData.append('file_name', file.file.name);
       formData.append('time', time);
-      // formData.append('type', 'pdf');
+    } else if (isAudio) {
+      console.log("上传音频");
+      endpoint = 'http://127.0.0.1:5000/api/audioIE';
+      formData.append('username', username);
+      formData.append('file_name', file_name);
+      formData.append('filename', file.file.name);
+      formData.append('time', time);
     } else {
       endpoint = 'http://127.0.0.1:5000/api/ocr';
       formData.append('username', username); // Replace with the actual username
@@ -403,19 +424,26 @@ methods: {
         },
         timeout: 600000,
       });
-      if (this.acceptedFileTypes === '.pdf'){
-        return { fileName: file.file.name, id: response[0], fileType: file.file.type, time: new Date() };
-      } else {
-        console.log(response);
-        return { fileName: file.file.name, base64: base64, data: response.text, Id: response.Id[0], fileType: file.file.type, time: new Date() };
+      const responseData = this.normalizeHwData(response);
+      if (responseData === 'false') {
+        throw new Error(`文件 "${file.file.name}" 已存在`);
       }
-      // Return the file name, the response data, and the file type
+      if (isPdf) {
+        return { fileName: file.file.name, id: this.resolveReturnedId(responseData), data: responseData?.text || '', fileType: file.file.type, time: new Date() };
+      }
+      if (isAudio) {
+        return { fileName: file.file.name, id: this.resolveReturnedId(responseData), data: responseData?.ie_result || '', fileType: file.file.type, time: new Date() };
+      }
+
+      console.log(responseData);
+      return { fileName: file.file.name, base64: base64, data: responseData.text, Id: this.resolveReturnedId(responseData), fileType: file.file.type, time: new Date() };
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error(error.message);
       } else {
         console.error('Unknown error', error);
       }
+      throw error;
     }
   },
 
@@ -431,9 +459,13 @@ methods: {
         console.error(`File "${fileName}" has already been uploaded.`);
         continue; // Skip this file
       }
+      uploadedFileNames.add(fileName);
       console.log("上传文件" + i);
       try {
         const fileData = await this.uploadFile(this.files[i], i);
+        if (!fileData) {
+          continue;
+        }
 
         // Store the file name and its corresponding response data in the corresponding map based on the file type
         if (fileData.fileType.startsWith('image/')) {
@@ -468,6 +500,7 @@ methods: {
           this.pdfFileDataMap.push({
             id: fileData.id,
             fileName: fileData.fileName,
+            data: fileData.data,
             time: fileData.time,
             star: false,
           });
@@ -487,6 +520,7 @@ methods: {
     });
     this.isLoading = false;
     this.isOpen = false;
+    this.files = [];
     this.$emit('open-success');
     // Now you have separate maps for each file type
   },

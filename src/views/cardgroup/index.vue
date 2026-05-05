@@ -126,6 +126,81 @@
         </div>
       </li>
       
+      <!-- 音频文件上传记录 -->
+      <li
+      v-for="(item, index) in fileDataMap.audioFileDataMap" :key="'uploaded-audio-' + index"
+      class="p-1 mb-3 items-center justify-center w-full rounded-xl group sm:flex space-x-6  bg-opacity-50 shadow-xl hover:rounded-2xl bg-gradient-to-r from-violet-200 to-pink-200"
+      >
+      <div class="inline-flex items-center">
+        <label
+          class="relative flex cursor-pointer items-center rounded-full"
+          data-ripple-dark="true"
+        >
+          <input
+            type="checkbox"
+            class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-pink-500 checked:bg-pink-500 checked:before:bg-pink-500 hover:before:opacity-10"
+            :value="item" @change="selectId(item, 'audio')"
+          />
+          <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-3.5 w-3.5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              stroke="currentColor"
+              stroke-width="1"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
+          </div>
+        </label>
+      </div>
+        <div class="sm:w-8/12 pl-0 p-5 relative">
+          <button
+          class="hover:bg-blue-200 hover:rounded-full absolute -right-6"
+          @click="fileDataMap.audioFileDataMap.splice(index, 1)"
+          >
+              <svg-icon name="关闭"></svg-icon>
+          </button>
+          <div class="space-y-2">
+            <div class="space-y-4">
+                    {{ item.fileName }}
+            </div>
+            <div
+            class="space-y-4 bg-gray-50 bg-opacity-80 rounded-lg shadow-inner px-3 py-1"
+            :title="item.data"
+            draggable="true" @dragstart="dragStart($event, item.data)" @dragend="dragEnd"
+            >
+              {{ item.data && item.data.length > 30 ? item.data.slice(0, 30) + '...' : item.data }}
+            </div>
+            <div class="flex items-center space-x-4 justify-between">
+            <div class="text-grey-500 flex flex-row space-x-1  my-4 h-9">
+              <svg stroke="currentColor" fill="none" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <p class="text-xs">{{ item.time }}</p>
+            </div>
+            <div class="flex flex-row space-x-1 relative">
+              <div
+              class="bg-red-200 shadow-lg shadow- hover:shadow-red-300 hover:scale-95 text-white cursor-pointer px-3 py-1 text-center justify-center items-center rounded-xl flex space-x-2 flex-row absolute right-20"
+              @click="insertText(item.data)"
+              >
+              <span class="text-nowrap">插入</span>
+              </div>
+              <div
+              class="bg-emerald-200 shadow-lg shadow- hover:shadow-emerald-300 hover:scale-95 text-white cursor-pointer px-3 text-center justify-center items-center py-1 rounded-xl flex space-x-2 flex-row absolute right-0"
+              @click="openModal(item.data, item.fileName, 'audio')"
+              >
+              <span class="text-nowrap">提取</span>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </li>
+
       <!-- 数据库录音记录 -->
       <li
       v-for="(item, index) in audioData" :key="index"
@@ -219,7 +294,7 @@
       <li
       v-for="(item, index) in fileDataMap.imageFileDataMap" :key="index"
       class="p-1 mb-3 items-center justify-center w-full rounded-xl group sm:flex space-x-6  bg-opacity-50 shadow-xl hover:rounded-2xl bg-gradient-to-tr from-sky-200 to-indigo-400"
-      draggable="true" @dragstart="dragStart($event, item.data)" @dragend="dragEnd"
+      draggable="true" @dragstart="dragStart($event, item.data || item.fileName)" @dragend="dragEnd"
       >
       <div class="inline-flex items-center">
         <label
@@ -232,7 +307,7 @@
             class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-pink-500 checked:bg-pink-500 checked:before:bg-pink-500 hover:before:opacity-10"
             id="checkbox-1"
 
-             :value="item" @change="selectId(item, 'audio')"
+             :value="item" @change="selectId(item, 'image')"
           />
           <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
             <svg
@@ -312,7 +387,7 @@
             class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-pink-500 checked:bg-pink-500 checked:before:bg-pink-500 hover:before:opacity-10"
             id="checkbox-1"
 
-             :value="item" @change="selectId(item, 'audio')"
+             :value="item" @change="selectId(item, 'image')"
           />
           <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
             <svg
@@ -426,9 +501,10 @@
           </div>
           <div
            class="space-y-4 bg-gray-300 bg-opacity-80 rounded-lg shadow-inner px-3 py-1"
-            draggable="true" @dragstart="dragStart($event, item.transcription)" @dragend="dragEnd"
+            :title="item.data"
+            draggable="true" @dragstart="dragStart($event, item.data || item.fileName)" @dragend="dragEnd"
            >
-            电子文档编号：{{ item.id }}
+            {{ item.data ? (item.data.length > 30 ? item.data.slice(0, 30) + '...' : item.data) : '电子文档编号：' + item.id }}
           </div>
           <div class="flex items-center space-x-4 justify-between">
             <div class="text-grey-500 flex flex-row space-x-1  my-4 h-9">
@@ -438,7 +514,7 @@
             <div class="flex flex-row space-x-1 relative">
               <div
                 class="bg-red-200 shadow-lg shadow- hover:shadow-red-300 hover:scale-95 text-white cursor-pointer px-3 py-1 text-center justify-center items-center rounded-xl flex space-x-2 flex-row absolute right-20"
-                @click="insertText(item.fileName)"
+                @click="insertText(item.data || item.fileName)"
               >
                 <span class="text-nowrap">插入</span>
               </div>
@@ -458,7 +534,7 @@
       <li
       v-for="(item, index) in pdfData" :key="index"
       class="p-1 mb-3 items-center justify-center w-full rounded-xl group sm:flex space-x-6  bg-opacity-50 shadow-xl hover:rounded-2xl bg-gradient-to-tr from-red-200 to-red-400"
-      draggable="true" @dragstart="dragStart($event, 'success')" @dragend="dragEnd"
+      draggable="true" @dragstart="dragStart($event, item.text || item.name)" @dragend="dragEnd"
       >
         <div class="inline-flex items-center">
         <label
@@ -505,9 +581,10 @@
           </div>
           <div
            class="space-y-4 bg-gray-300 bg-opacity-80 rounded-lg shadow-inner px-3 py-1"
-            draggable="true" @dragstart="dragStart($event, 'success')" @dragend="dragEnd"
+            :title="item.text"
+            draggable="true" @dragstart="dragStart($event, item.text || item.name)" @dragend="dragEnd"
            >
-           电子文档编号：{{ item.id }}
+           {{ item.text ? (item.text.length > 30 ? item.text.slice(0, 30) + '...' : item.text) : '电子文档编号：' + item.id }}
           </div>
           <div class="flex items-center space-x-4 justify-between">
             <div class="text-grey-500 flex flex-row space-x-1  my-4 h-9">
@@ -517,7 +594,7 @@
             <div class="flex flex-row space-x-1 relative">
               <div
                 class="bg-red-200 shadow-lg shadow- hover:shadow-red-300 hover:scale-95 text-white cursor-pointer px-3 py-1 text-center justify-center items-center rounded-xl flex space-x-2 flex-row absolute right-20"
-                @click="insertText(item.name)"
+                @click="insertText(item.text || item.name)"
               >
                 <span class="text-nowrap">插入</span>
               </div>
@@ -752,6 +829,8 @@ interface Transcription {
 
 interface FileDataMap {
   imageFileDataMap: any[];
+  audioFileDataMap: any[];
+  videoFileDataMap: any[];
   pdfFileDataMap: any[];
 }
 export default defineComponent({
@@ -869,6 +948,57 @@ export default defineComponent({
       console.log(this.selectedIdList);
     },
 
+    async deleteItemDataBase(index, type, item) {
+      const username = localStorage.getItem("userName") || "unknown_user";
+      const file_name = this.document.title;
+      let url = '';
+      const formData = new FormData();
+      switch (type) {
+        case 'audio':
+          url = '/audio_delete';
+          formData.append('username', username);
+          formData.append('file_name', file_name);
+          formData.append('name', item.name);
+          break;
+        case 'image':
+          url = '/ocr_delete';
+          formData.append('username', username);
+          formData.append('file_name', file_name);
+          formData.append('name', item.name);
+          break;
+        case 'pdf':
+          url = '/pdf_delete';
+          formData.append('username', username);
+          formData.append('file_name', item.name);
+          break;
+        default:
+          console.error('Unknown type: ', type);
+          return;
+      }
+
+      try {
+        await axios.post(url, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        switch (type) {
+          case 'audio':
+            this.audioData.splice(index, 1);
+            break;
+          case 'image':
+            this.pictureData.splice(index, 1);
+            break;
+          case 'pdf':
+            this.pdfData.splice(index, 1);
+            break;
+        }
+      } catch (error) {
+        console.error('Delete failed:', error);
+      }
+    },
+
     emitOpenMindMapModal() {
       this.$emit('open-mindmap-modal', this.ifNoMindMap);
       this.ifNoMindMap = !this.ifNoMindMap;
@@ -961,17 +1091,19 @@ export default defineComponent({
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       });
-      console.log(response);
+      const responseData = response && response.data && response.data.hwdata !== undefined ? response.data.hwdata : response;
+      const payload = responseData || { audio: [], picture: [], pdf: [] };
+      console.log(payload);
 
-      response.audio.forEach(item => {
+      (payload.audio || []).forEach(item => {
         this.audioData.push(item);
       });
 
-      response.picture.forEach(item => {
+      (payload.picture || []).forEach(item => {
         this.pictureData.push(item);
       });
 
-      response.pdf.forEach(item => {
+      (payload.pdf || []).forEach(item => {
         this.pdfData.push(item);
       });
 
@@ -979,7 +1111,7 @@ export default defineComponent({
       console.error("API request failed: ", error);
     }
   },
-  setup(props) {
+  setup(props, { emit }) {
     const chartOptions = {
       xAxis: {
         type: 'category',
@@ -1047,74 +1179,10 @@ export default defineComponent({
           console.error('Error:', error);
         } finally {
           isCreating.value = false;
-          this.$emit('close-chartsdialog'); // 向父组件发送事件
-          this.$emit('open-success');
+          emit('close-chartsdialog'); // 向父组件发送事件
+          emit('open-success');
         }
       };
-    // 删除数据库
-    async function deleteItemDataBase(index, type, item) {
-      const username = localStorage.getItem("userName") || "unknown_user";
-      const file_name = this.document.title;
-      let url = '';
-      const formData = new FormData();
-      switch (type) {
-        case 'audio':
-          url = '/audio_delete';
-          formData.append('username', username);
-          formData.append('file_name', file_name);
-          formData.append('name', item.name);
-          break;
-        case 'image':
-          url = '/ocr_delete';
-          formData.append('username', username);
-          formData.append('file_name', file_name);
-          formData.append('name', item.name);
-          break;
-        case 'pdf':
-          url = '/pdf_delete';
-          formData.append('username', username);
-          formData.append('file_name', item.name);
-          break;
-        default:
-          console.error('Unknown type: ', type);
-          return;
-      }
-
-      try {
-        for (var value of formData.values()) {
-        console.log(value);
-      }
-        const response = await axios.post(url, formData, {
-            headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        console.log(response);
-
-        if (true) {
-          switch (type) {
-            case 'audio':
-              this.audioData.splice(index, 1);
-              break;
-            case 'image':
-              this.pictureData.splice(index, 1);
-              break;
-            case 'pdf':
-              this.pdfData.splice(index, 1);
-              break;
-          }
-        } else {
-          console.error("Error: ", response.data.hwmsg);
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error(error.message);
-        } else {
-          console.error('Unknown error', error);
-        }
-      }
-    };
-
     const onUpdate = () => {
       console.log('update');
     };
@@ -1239,7 +1307,7 @@ export default defineComponent({
       } finally {
           isLoading.value = false;
           isOpen.value = false;
-          this.$emit('open-success');
+          emit('open-success');
         }
     };
 
@@ -1282,7 +1350,6 @@ export default defineComponent({
       dragEnd,
       drop,
       data,
-      deleteItemDataBase,
       chartOptions,
       createCharts,
       isCreating,

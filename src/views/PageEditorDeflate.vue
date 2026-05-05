@@ -461,7 +461,12 @@ export default defineComponent({
       isDrawerOpen: false,
       transcriptions: [] as Array<{ Id: number; transcription: string; currentTime: string; name: string }>,
       inputText: "",
-      fileDataMap: {},
+      fileDataMap: {
+        imageFileDataMap: [],
+        videoFileDataMap: [],
+        audioFileDataMap: [],
+        pdfFileDataMap: []
+      },
       options: {
         //是否显示两侧的箭头
         controlArrows: true,

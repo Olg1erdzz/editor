@@ -43,7 +43,7 @@
   }
 
   ::selection {
-    background: rgba(var(--wx-brand-indigo), 0.2);
+    background: rgb(var(--wx-brand-indigo) / 0.2);
     color: rgb(var(--wx-ink));
   }
 }

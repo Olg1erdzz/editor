@@ -2,7 +2,7 @@
   <div class="file-tools-shell">
     <v-style>
       body { box-shadow: none; }
-      ::selection { background-color: rgba(var(--wx-brand-indigo), 0.2); color: rgb(var(--wx-ink)); }
+      ::selection { background-color: rgb(var(--wx-brand-indigo) / 0.2); color: rgb(var(--wx-ink)); }
       :root {
         --demo-font-color: rgb(var(--wx-ink));
         --demo-bars-bkg: rgba(255, 255, 255, 0.62);

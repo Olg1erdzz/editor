@@ -10,6 +10,7 @@
     </v-style>
     <div class="bars">
       <vue-file-toolbar-menu v-for="(content, index) in bars_content" :key="'bar-' + index" :content="content" :editor="editor" />
+      <LinkButton :editor="editor" :document="document"></LinkButton>
     </div>
     <!-- 新建文档对话框 -->
     <el-dialog title="新建文档" v-model="dialogVisible" width="30%">
@@ -528,7 +529,6 @@ export default {
               }
             ]
           },
-          { is: LinkButton },
           {
             icon: this.edit_mode ? "lock_open" : "lock",
             title: "切换模式",

@@ -67,6 +67,7 @@
       </MenuItems>
     </transition>
   </Menu>
+  <Teleport to="body">
   <transition name="modal-fade">
       <div v-show="isOpen"
         class="center-modal-overlay"
@@ -224,6 +225,7 @@
     </div>
   </div>
 </transition>
+  </Teleport>
 </template>
 
 <script>
@@ -535,13 +537,11 @@ activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.center-modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 80;
   padding: 24px;
+  overflow-y: auto;
   background: rgba(15, 23, 42, 0.12);
   backdrop-filter: blur(6px);
 }

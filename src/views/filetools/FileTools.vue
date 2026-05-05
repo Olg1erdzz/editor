@@ -774,20 +774,10 @@ a {
 .toolbar-scroll-shell {
   grid-column: 2;
   justify-self: stretch;
-  overflow-x: auto;
-  overflow-y: visible;
+  overflow: visible;
   z-index: 2;
   box-sizing: border-box;
   padding-inline: 10px;
-  scroll-padding-inline: 10px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.toolbar-scroll-shell:hover,
-.toolbar-scroll-shell:focus-within {
-  padding-bottom: 260px;
-  margin-bottom: -260px;
 }
 
 .toolbar-scroll-shell::-webkit-scrollbar {

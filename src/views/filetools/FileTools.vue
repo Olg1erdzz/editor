@@ -48,29 +48,31 @@
       }
       .bars {
         display: flex;
-        justify-content: flex-start;
+        justify-content: center;
         align-items: center;
         gap: 6px;
       }
     </v-style>
     <div class="toolbar-layout">
-      <div class="contextual-toolbar bars" aria-label="编辑工具栏">
-        <vue-file-toolbar-menu
-          v-for="(content, index) in bars_content"
-          :key="'bar-' + index"
-          :content="content"
-          :editor="editor"
-        />
-        <LinkButton
-          :editor="editor"
-          :ifNoMindMap="ifNoMindMap"
-          :document="document"
-          @update-data="handleUpdateData"
-          @record-button-clicked="showRecord"
-          @create-mindmap="loadingMindMap"
-          @open-chartsdialog="openChartsDialog"
-          @open-success="openSuccess"
-        ></LinkButton>
+      <div class="toolbar-scroll-shell">
+        <div class="contextual-toolbar bars" aria-label="编辑工具栏">
+          <vue-file-toolbar-menu
+            v-for="(content, index) in bars_content"
+            :key="'bar-' + index"
+            :content="content"
+            :editor="editor"
+          />
+          <LinkButton
+            :editor="editor"
+            :ifNoMindMap="ifNoMindMap"
+            :document="document"
+            @update-data="handleUpdateData"
+            @record-button-clicked="showRecord"
+            @create-mindmap="loadingMindMap"
+            @open-chartsdialog="openChartsDialog"
+            @open-success="openSuccess"
+          ></LinkButton>
+        </div>
       </div>
 
       <div class="mode-console" aria-label="工作模式">
@@ -762,16 +764,45 @@ a {
 
 .toolbar-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1080px) minmax(0, 1fr);
   align-items: center;
   gap: 14px;
   width: 100%;
   min-height: 50px;
 }
 
-.contextual-toolbar {
-  min-width: 0;
+.toolbar-scroll-shell {
+  grid-column: 2;
+  justify-self: stretch;
   overflow-x: auto;
+  overflow-y: visible;
+  z-index: 2;
+  box-sizing: border-box;
+  padding-inline: 10px;
+  scroll-padding-inline: 10px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.toolbar-scroll-shell:hover,
+.toolbar-scroll-shell:focus-within {
+  padding-bottom: 260px;
+  margin-bottom: -260px;
+}
+
+.toolbar-scroll-shell::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.contextual-toolbar {
+  position: relative;
+  display: inline-flex;
+  width: max-content;
+  min-width: 100%;
+  justify-content: center;
+  overflow: visible;
   border: 1px solid rgba(var(--wx-workspace-border), 0.72);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.72);
@@ -813,7 +844,15 @@ a {
   backdrop-filter: blur(16px);
 }
 
+::v-deep(.bar-button > .menu),
+::v-deep(.bar-menu),
+::v-deep(.bar-menu-items) {
+  z-index: 120 !important;
+}
+
 .mode-console {
+  grid-column: 3;
+  justify-self: end;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -908,11 +947,24 @@ a {
 @media (max-width: 980px) {
   .toolbar-layout {
     grid-template-columns: 1fr;
+    gap: 12px;
+    justify-content: stretch;
+  }
+
+  .toolbar-scroll-shell {
+    grid-column: auto;
+    width: 100%;
   }
 
   .mode-console {
+    grid-column: auto;
+    position: static;
     justify-content: space-between;
     width: 100%;
+  }
+
+  .contextual-toolbar {
+    justify-content: flex-start;
   }
 }
 </style>

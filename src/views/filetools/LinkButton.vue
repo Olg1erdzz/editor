@@ -1,105 +1,75 @@
 <!--  -->
 <template>
   <!-- <Recorder ref="record"></Recorder> -->
-  <Menu as="div" class="relative inline-block text-left z-50 ">
-      <div>
-        <MenuButton class="btn-s btn-2 w-full justify-center flex items-center bg-white px-2 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-100 rounded-full">
-          <svg-icon name="link-ai" class="mr-2"></svg-icon>
-          Ai-Links
-        </MenuButton>
-      </div>
+  <Menu as="div" class="ai-links-menu">
+    <div>
+      <MenuButton class="ai-links-trigger btn-s btn-2">
+        <svg-icon name="link-ai" class="mr-2"></svg-icon>
+        Ai-Links
+      </MenuButton>
+    </div>
 
-      <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-        <MenuItems class="grid px-3 py-3 grid-rows-[46px_46px_] grid-cols-2 gap-3 absolute right-0 mt-2 w-72 origin-top-right rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-30">
-          <div class="rounded-lg border-gray-200 border-2 border-solid">
-              <MenuItem v-slot="{ active }" class="col-span-1">
-                  <button
-                  :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex text-start items-center px-4 py-2 text-sm rounded-lg h-full w-full']"
-                  @click="openModalAndSetAcceptedFileTypes('image/png,image/jpeg,image/jpg')"
-                  >
-                  <svg-icon name="图片识别" class="mr-2"></svg-icon>
-                  图片识别
-                  </button>
-              </MenuItem>
-          </div>
-          <div class="rounded-lg border-gray-200 border-2 border-solid">
-              <MenuItem v-slot="{ active }" class="col-span-1">
-                  <button
-                  :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex text-start items-center px-4 py-2 text-sm rounded-lg h-full w-full']"
-                  @click="openMindMapDiolog"
-                  >
-                  <svg-icon name="m-思维导图" class="mr-2"></svg-icon>
-                  思维导图
-                  </button>
-              </MenuItem>
-          </div>
-          <div class="rounded-lg border-gray-200 border-2 border-solid">
-              <MenuItem v-slot="{ active }" class="col-span-1">
-                  <button
-                  :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex text-start items-center px-4 py-2 text-sm rounded-lg h-full w-full']"
-                  @click="this.$emit('open-chartsdialog')"
-                  >
-                  <svg-icon name="数据可视化1" class="mr-2"></svg-icon>
-                  生成图表
-                  </button>
-              </MenuItem>
-          </div>
-          <div class="rounded-lg border-gray-200 border-2 border-solid">
-              <MenuItem v-slot="{ active }" class="col-span-1">
-                  <button
-                  :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex text-start items-center px-4 py-2 text-sm rounded-lg h-full w-full']"
-                  @click="openModalAndSetAcceptedFileTypes('.pdf')"
-                  >
-                  <svg-icon name="pdf" class="mr-2"></svg-icon>
-                  PDF
-                  </button>
-              </MenuItem>
-          </div>
-          <div class="border-dashed border-t-2 border-gray-100 col-span-2 pt-2">
-              <MenuItem v-slot="{ active }" class="col-span-1">
-                  <button
-                  :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex text-start items-center px-4 py-2 text-sm w-full rounded-lg']"
-                  @click="setimage()"
-                  >
-                  <svg-icon name="图片" class="mr-2"></svg-icon>
-                  图片
-                  </button>
-              </MenuItem>
-              <MenuItem v-slot="{ active }" class="col-span-1">
-                  <button
-                  :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex text-start items-center px-4 py-2 text-sm w-full rounded-lg']"
-                  @click="showRecorder()"
-                  >
-                  <svg-icon name="录音" class="mr-2"></svg-icon>
-                  录音
-                  </button>
-              </MenuItem>
-              <MenuItem v-slot="{ active }" class="col-span-1">
-                  <button
-                  :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex text-start items-center px-4 py-2 text-sm w-full rounded-lg']"
-                  @click="openModalAndSetAcceptedFileTypes('audio/mp3,audio/wav')"
-                  >
-                  <svg-icon name="声音-音乐" class="mr-2"></svg-icon>
-                  音频文件
-                  </button>
-              </MenuItem>
-              <MenuItem v-slot="{ active }" class="col-span-1">
-                <button
-                :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'flex text-start items-center px-4 py-2 text-sm w-full rounded-lg']"
-                @click="openModalAndSetAcceptedFileTypes('video/*')"
-                >
-                <svg-icon name="视频" class="mr-2"></svg-icon>
-                视频文件
-                </button>
-            </MenuItem>
-          </div>
+    <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
+      <MenuItems class="ai-links-dropdown">
+        <div class="ai-links-grid">
+          <MenuItem v-slot="{ active }">
+            <button type="button" :class="['ai-links-card', { 'is-active': active }]" @click="openModalAndSetAcceptedFileTypes('image/png,image/jpeg,image/jpg')">
+              <svg-icon name="图片识别" class="ai-links-icon"></svg-icon>
+              <span>图片识别</span>
+            </button>
+          </MenuItem>
+          <MenuItem v-slot="{ active }">
+            <button type="button" :class="['ai-links-card', { 'is-active': active }]" @click="openMindMapDiolog">
+              <svg-icon name="m-思维导图" class="ai-links-icon"></svg-icon>
+              <span>思维导图</span>
+            </button>
+          </MenuItem>
+          <MenuItem v-slot="{ active }">
+            <button type="button" :class="['ai-links-card', { 'is-active': active }]" @click="$emit('open-chartsdialog')">
+              <svg-icon name="数据可视化1" class="ai-links-icon"></svg-icon>
+              <span>生成图表</span>
+            </button>
+          </MenuItem>
+          <MenuItem v-slot="{ active }">
+            <button type="button" :class="['ai-links-card', { 'is-active': active }]" @click="openModalAndSetAcceptedFileTypes('.pdf')">
+              <svg-icon name="pdf" class="ai-links-icon"></svg-icon>
+              <span>PDF</span>
+            </button>
+          </MenuItem>
+        </div>
 
-        </MenuItems>
-      </transition>
-    </Menu>
-    <transition name="modal-fade">
+        <div class="ai-links-footer">
+          <MenuItem v-slot="{ active }">
+            <button type="button" :class="['ai-links-action', { 'is-active': active }]" @click="setimage()">
+              <svg-icon name="图片" class="ai-links-icon small"></svg-icon>
+              <span>图片</span>
+            </button>
+          </MenuItem>
+          <MenuItem v-slot="{ active }">
+            <button type="button" :class="['ai-links-action', { 'is-active': active }]" @click="showRecorder()">
+              <svg-icon name="录音" class="ai-links-icon small"></svg-icon>
+              <span>录音</span>
+            </button>
+          </MenuItem>
+          <MenuItem v-slot="{ active }">
+            <button type="button" :class="['ai-links-action', { 'is-active': active }]" @click="openModalAndSetAcceptedFileTypes('audio/mp3,audio/wav')">
+              <svg-icon name="声音-音乐" class="ai-links-icon small"></svg-icon>
+              <span>音频文件</span>
+            </button>
+          </MenuItem>
+          <MenuItem v-slot="{ active }">
+            <button type="button" :class="['ai-links-action', { 'is-active': active }]" @click="openModalAndSetAcceptedFileTypes('video/*')">
+              <svg-icon name="视频" class="ai-links-icon small"></svg-icon>
+              <span>视频文件</span>
+            </button>
+          </MenuItem>
+        </div>
+      </MenuItems>
+    </transition>
+  </Menu>
+  <transition name="modal-fade">
       <div v-show="isOpen"
-        class="fixed inset-0 z-10 overflow-y-auto"
+        class="center-modal-overlay"
         aria-labelledby="modal-title" role="dialog" aria-modal="true"
         @click.self="closeModal"
 
@@ -200,7 +170,7 @@
   <!-- 思维导图模态框 -->
   <transition name="modal-fade">
     <div v-show="isMindMapDiologOpen"
-      class="fixed inset-0 z-10 overflow-y-auto"
+      class="center-modal-overlay"
       aria-labelledby="modal-title" role="dialog" aria-modal="true"
       @click.self="closeMindMapDiolog"
 
@@ -260,24 +230,15 @@
 import { Editor } from "@tiptap/vue-3";
 import Recorder from "js-audio-recorder";
 import axios from "axios";
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  TransitionRoot,
-  TransitionChild,
-} from '@headlessui/vue';
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 export default {
-
+	
 //import引入的组件需要注入到对象中才能使用
 components: {
   Menu,
   MenuButton,
   MenuItem,
   MenuItems,
-  TransitionRoot,
-  TransitionChild,
   Recorder
 },
 props: {
@@ -548,9 +509,9 @@ methods: {
     this.files = []; // Clear the files array
   },
   openModalAndSetAcceptedFileTypes(fileTypes) {
-      this.acceptedFileTypes = fileTypes;
-      this.isOpen = true;
-    },
+    this.acceptedFileTypes = fileTypes;
+    this.isOpen = true;
+  },
 },
 //生命周期 - 创建完成（可以访问当前this实例）
 created() {
@@ -570,11 +531,122 @@ activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
 }
 </script>
 <style lang='scss' scoped>
-.fixed.inset-0.z-10.overflow-y-auto {
+.center-modal-overlay {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
+.center-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(6px);
+}
+
+.ai-links-menu {
+  position: relative;
+  z-index: 130;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+}
+
+.ai-links-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 140;
+  width: 360px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 24px 60px -34px rgba(15, 23, 42, 0.42);
+  backdrop-filter: blur(18px);
+}
+
+.ai-links-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ai-links-card,
+.ai-links-action {
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  background: rgba(255, 255, 255, 0.95);
+  color: #334155;
+  transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+.ai-links-card {
+  min-height: 72px;
+  padding: 0 16px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  justify-content: flex-start;
+}
+
+.ai-links-action {
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  justify-content: flex-start;
+}
+
+.ai-links-card:hover,
+.ai-links-action:hover,
+.ai-links-card.is-active,
+.ai-links-action.is-active {
+  border-color: rgba(99, 102, 241, 0.38);
+  background: rgba(248, 250, 255, 0.98);
+  box-shadow: 0 18px 30px -28px rgba(79, 70, 229, 0.5);
+  transform: translateY(-1px);
+}
+
+.ai-links-footer {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(203, 213, 225, 0.9);
+}
+
+.ai-links-icon {
+  flex: 0 0 auto;
+  color: #4f46e5;
+}
+
+.ai-links-icon.small {
+  color: #475569;
+}
+
+.ai-links-trigger {
+  display: inline-flex;
+  min-height: 36px;
+  min-width: 118px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex: 0 0 auto !important;
+  width: auto;
+  position: relative;
+  z-index: 1;
+}
+
 .modal-fade-enter-active, .modal-fade-leave-active {
   transition: opacity 0.3s ease-out, opacity 0.2s ease-in;
 }
@@ -585,7 +657,7 @@ activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
   opacity: 1;
 }
 .btn-s {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   text-align: center;
   text-transform: uppercase;
   transition: 0.5s;
@@ -597,7 +669,16 @@ activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
  .btn-s:hover {
   background-position: right center; /* change the direction of the change here */
 }
-.btn-2 {
+ .btn-2 {
   background-image: linear-gradient(to right, #fbc2eb 0%, #a6c1ee 51%, #fbc2eb 100%);
+ }
+
+@media (max-width: 768px) {
+  .ai-links-dropdown {
+    right: auto;
+    left: 50%;
+    width: min(360px, calc(100vw - 24px));
+    transform: translateX(-50%);
+  }
 }
 </style>

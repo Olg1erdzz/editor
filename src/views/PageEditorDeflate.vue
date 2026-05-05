@@ -105,9 +105,13 @@
       <OuterCommentVue :active-comments-instance="activeCommentsInstance" :all-comments="allComments" :format-date="formatDate" :focus-content="focusContent" :is-comment-mode-on="isCommentModeOn" @set-comment="setComment" />
     </div>
     <!-- 对话机器人 -->
-    <chatBot class="rag-panel" v-show="isRAG">
-
-    </chatBot>
+    <chatBot
+      class="rag-panel"
+      v-show="isRAG"
+      :editor="editor"
+      :document="document"
+      :selected-text="selectedTextCC"
+    ></chatBot>
     <!-- 编辑气泡菜单 -->
     <bubble-menu :editor="editor" :tippy-options="{ duration: 100 }" v-if="editor&&isEditing" link>
       <div class="format-bubble">
@@ -1357,6 +1361,7 @@ export default defineComponent({
   left: 0;
   right: 0;
   z-index: 50;
+  overflow: visible;
   min-height: 58px;
   border-bottom: 1px solid #d8dee8;
   background: rgba(255, 255, 255, 0.96);

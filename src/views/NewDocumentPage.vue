@@ -103,6 +103,12 @@ export default {
 
       this.isCreating = true;
       const username = localStorage.getItem("userName") || "unknown_user";
+      const resolveHwdata = (response) => {
+        if (typeof response === "string") {
+          return response;
+        }
+        return response?.data?.hwdata;
+      };
 
       try {
         const existingDocumentsResponse = await axios.get("http://127.0.0.1:5000/api/check_documents", {
@@ -112,7 +118,7 @@ export default {
           }
         });
 
-        if (existingDocumentsResponse.data?.hwdata === "true") {
+        if (resolveHwdata(existingDocumentsResponse) === "true") {
           this.$message.error("文档名称已存在，请换一个名称。");
           return;
         }
@@ -123,7 +129,7 @@ export default {
           file_type: "doc"
         });
 
-        if (uploadResponse.data?.hwdata !== "true") {
+        if (resolveHwdata(uploadResponse) !== "true") {
           this.$message.error("创建文档失败，请稍后重试。");
           return;
         }

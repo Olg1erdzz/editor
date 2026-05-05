@@ -20,7 +20,7 @@ export default defineConfig({
     vue(),
     wasm(),
     topLevelAwait(),
-    createSvg("./src/icons/svg/"),
+    createSvg("./src/icons/svg/")
     // legacy({
     //   targets: ["defaults", "not IE 11"]
     // })
@@ -37,7 +37,9 @@ export default defineConfig({
     }
   },
   server: {
+    host: "127.0.0.1",
     port: 3000,
+    strictPort: true,
     open: true,
     proxy: {
       "/api": {

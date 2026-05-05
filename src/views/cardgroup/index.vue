@@ -688,7 +688,7 @@
   </transition>
   <Transition name="modal-fade">
     <div v-show="isOpenChartsDialog"
-        class="fixed inset-0 z-20 overflow-y-auto"
+        class="charts-center-modal"
         aria-labelledby="modal-title" role="dialog" aria-modal="true"
     >
     <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
@@ -1293,6 +1293,15 @@ export default defineComponent({
 });
   </script>
 <style scoped>
+.charts-center-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  overflow-y: auto;
+  background: rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(6px);
+}
+
 .modal-fade-enter-active, .modal-fade-leave-active {
   transition: opacity 0.3s ease-out, opacity 0.2s ease-in;
 }

@@ -279,6 +279,12 @@ export default {
     await this.fetchDocuments();
   },
   methods: {
+    resolveHwdata(response) {
+      if (typeof response === "string") {
+        return response;
+      }
+      return response?.data?.hwdata;
+    },
     addDocument(document) {
       this.$emit("add-document", document);
     },
@@ -320,7 +326,8 @@ export default {
             "Content-Type": "application/json"
           }
         });
-        const documentContent = response.data || response || "";
+        const documentContent =
+          typeof response === "string" ? response : response?.data?.hwdata ?? response?.data ?? "";
         this.openDocument(doc, documentContent);
       } catch (error) {
         this.$message.error("打开文档时发生错误");
@@ -332,7 +339,7 @@ export default {
       const newDocument = {
         id: doc.id,
         title: doc.name,
-        path: `/documents/${doc.file_path || doc.id}`,
+        path: `/documents/${doc.id}`,
         isOpen: true,
         content
       };
@@ -342,6 +349,12 @@ export default {
       this.$router.push({
         path: newDocument.path,
         query: {
+          document: JSON.stringify({
+            id: newDocument.id,
+            title: newDocument.title,
+            path: newDocument.path,
+            isOpen: newDocument.isOpen
+          }),
           name: doc.name,
           content
         }
@@ -368,12 +381,11 @@ export default {
     },
     async deleteDocument(doc) {
       try {
-        const formData = new FormData();
-        formData.append("username", localStorage.getItem("userName") || "unknown_user");
-        formData.append("file_name", doc.name);
-
-        const response = await axios.post("http://127.0.0.1:5000/api/delete", formData);
-        const success = response.data === true || response.data === "true" || response === "true";
+        const response = await axios.post("http://127.0.0.1:5000/api/delete", {
+          username: localStorage.getItem("userName") || "unknown_user",
+          file_name: doc.name
+        });
+        const success = this.resolveHwdata(response) === "true";
 
         if (success) {
           this.$message.success("文档已删除");

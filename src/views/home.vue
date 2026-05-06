@@ -153,10 +153,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { Delete, EditPen, Files, MagicStick, Microphone, Picture, Position, Reading, RefreshRight } from "@element-plus/icons-vue";
 import type { Document } from "@/types/types";
-import type { AgentChatResult, AgentContextResult, AgentSource, AgentStep } from "./agent/types";
+import type { AgentChatResult, AgentContextResult, AgentResourceSummary, AgentSource, AgentStep } from "./agent/types";
 import { clearAgentSession, fetchAgentContext, sendAgentMessage } from "./agent/api";
 import { md } from "./libs/markdown";
 import Loding from "@/components/Loding.vue";
@@ -328,13 +328,30 @@ const scrollToBottom = () => {
   });
 };
 
+const applyResourceSummary = (summary?: AgentResourceSummary | null) => {
+  if (!summary) return;
+  resourceSummary.value = {
+    ...resourceSummary.value,
+    ...summary
+  };
+};
+
 const refreshContext = async () => {
   try {
     const result = (await fetchAgentContext(username.value)) as AgentContextResult;
-    resourceSummary.value = result.resourceSummary || resourceSummary.value;
+    applyResourceSummary(result.resourceSummary);
   } catch (error) {
     console.error("Failed to refresh agent context:", error);
   }
+};
+
+const handleAgentKnowledgeUpdated = (event: Event) => {
+  const detail = (event as CustomEvent<{ resourceSummary?: AgentResourceSummary | null }>).detail;
+  if (detail?.resourceSummary) {
+    applyResourceSummary(detail.resourceSummary);
+    return;
+  }
+  refreshContext();
 };
 
 const sendMessage = async () => {
@@ -361,7 +378,7 @@ const sendMessage = async () => {
     localStorage.setItem(sessionStorageKey.value, result.sessionId);
     lastModel.value = result.model;
     lastToolModel.value = result.toolModel;
-    resourceSummary.value = result.resourceSummary;
+    applyResourceSummary(result.resourceSummary);
     replacePendingAssistant(result);
   } catch (error) {
     const lastMessage = messageList.value[messageList.value.length - 1];
@@ -404,11 +421,16 @@ const resetAgentWorkspace = async () => {
 };
 
 onMounted(async () => {
+  window.addEventListener("agent-knowledge-updated", handleAgentKnowledgeUpdated);
   const storedSessionId = localStorage.getItem(sessionStorageKey.value);
   if (storedSessionId) {
     sessionId.value = storedSessionId;
   }
   await refreshContext();
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("agent-knowledge-updated", handleAgentKnowledgeUpdated);
 });
 
 watch(

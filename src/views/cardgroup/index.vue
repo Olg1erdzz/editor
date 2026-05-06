@@ -1,26 +1,34 @@
 <template>
   <!-- component -->
-  <div class="w-full max-w-sm flex flex-col mx-auto text-center">
-    <div v-data="{ selected: true }" class="w-full rounded bg-white h-auto m-auto shadow flex flex-col p-2 rounded-xl">
-      <div class="relative w-full rounded-md border h-10 p-1 bg-gray-200">
+  <div class="mm-mode-switch w-full max-w-sm flex flex-col mx-auto text-center">
+    <div v-data="{ selected: true }" class="mm-mode-switch__shell w-full rounded bg-white h-auto m-auto shadow flex flex-col p-2 rounded-xl">
+      <div class="mm-mode-switch__track relative w-full rounded-md border h-10 p-1 bg-gray-200">
         <div class="relative w-full h-full flex items-center">
-          <div @click="selected=!selected; $emit('toggle-display', selected); isMindMapVisible = false" class="w-full flex justify-center text-gray-400 cursor-pointer">
-            <button>多模态数据中心</button>
+          <div
+            @click="selected = true; $emit('toggle-display', selected); isMindMapVisible = false"
+            class="mm-mode-switch__option w-full flex justify-center text-gray-400 cursor-pointer"
+            :class="{ 'mm-mode-switch__option--active': selected }"
+          >
+            <button type="button">多模态数据中心</button>
           </div>
-          <div @click="selected=!selected; $emit('toggle-display', selected); isMindMapVisible = true" class="w-full flex justify-center text-gray-400 cursor-pointer">
-            <button>思维导图</button>
+          <div
+            @click="selected = false; $emit('toggle-display', selected); isMindMapVisible = true"
+            class="mm-mode-switch__option w-full flex justify-center text-gray-400 cursor-pointer"
+            :class="{ 'mm-mode-switch__option--active': !selected }"
+          >
+            <button type="button">思维导图</button>
           </div>
         </div>
-        <span :class="{ 'left-1/2 -ml-1 text-orange-500 font-semibold':!selected, 'left-1 text-indigo-600 font-semibold':selected }"
-          v-text="selected ? '多模态数据中心' : '思维导图'"
-          class="bg-white shadow text-sm flex items-center justify-center w-1/2 rounded h-[1.88rem] transition-all duration-150 ease-linear top-[4px] absolute"></span>
+        <span :class="{ 'left-1/2 -ml-1': !selected, 'left-1': selected }"
+          aria-hidden="true"
+          class="mm-mode-switch__thumb bg-white shadow text-sm flex items-center justify-center w-1/2 rounded h-[1.88rem] transition-all duration-150 ease-linear top-[4px] absolute"></span>
       </div>
       
     </div>
 
   </div>
   <!-- 壳子 -->
-  <div class="h-[76vh] bg-white rounded-xl shadow-xl mt-3 opacity-80 overflow-y-auto whitespace-normal overflow-auto scrollbar-hide" :class="{ 'w-3/12 h-[777px] float-left': isFullscreen }">
+  <div class="mm-data-center scrollbar-hide" :class="{ 'mm-data-center--fullscreen': isFullscreen }">
   <!-- 卡片组 -->
    
   <transition name="slide-fade">
@@ -29,7 +37,7 @@
         ref="el"
         v-model="list"
         ghostClass="ghost"
-        class="flex flex-col gap-2 p-2 w-full h-300px m-auto rounded transition-all duration-500"
+        class="mm-card-stack"
         @update="onUpdate"
         handle=".handle"
       >
@@ -41,7 +49,7 @@
       <!-- 识别录音记录 -->
       <li
       v-for="(item, index) in transcriptions" :key="index"
-      class="p-1 mb-3 items-center justify-center w-full rounded-xl group sm:flex space-x-6  bg-opacity-50 shadow-xl hover:rounded-2xl bg-gradient-to-r from-violet-200 to-pink-200"
+      class="mm-data-card mm-data-card--audio"
       >
       <div class="inline-flex items-center">
         <label
@@ -53,7 +61,7 @@
             type="checkbox"
             class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-pink-500 checked:bg-pink-500 checked:before:bg-pink-500 hover:before:opacity-10"
             id="checkbox-1"
-             :value="item" @change="selectId(item, 'audio')"
+             :checked="isCardSelected(item, 'audio')" :value="item" @change="selectId(item, 'audio', $event)"
           />
           <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
             <svg
@@ -129,7 +137,7 @@
       <!-- 音频文件上传记录 -->
       <li
       v-for="(item, index) in fileDataMap.audioFileDataMap" :key="'uploaded-audio-' + index"
-      class="p-1 mb-3 items-center justify-center w-full rounded-xl group sm:flex space-x-6  bg-opacity-50 shadow-xl hover:rounded-2xl bg-gradient-to-r from-violet-200 to-pink-200"
+      class="mm-data-card mm-data-card--audio"
       >
       <div class="inline-flex items-center">
         <label
@@ -139,7 +147,7 @@
           <input
             type="checkbox"
             class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-pink-500 checked:bg-pink-500 checked:before:bg-pink-500 hover:before:opacity-10"
-            :value="item" @change="selectId(item, 'audio')"
+            :checked="isCardSelected(item, 'audio')" :value="item" @change="selectId(item, 'audio', $event)"
           />
           <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
             <svg
@@ -204,7 +212,7 @@
       <!-- 数据库录音记录 -->
       <li
       v-for="(item, index) in audioData" :key="index"
-      class="p-1 mb-3 items-center justify-center w-full rounded-xl group sm:flex space-x-6  bg-opacity-50 shadow-xl hover:rounded-2xl bg-gradient-to-r from-violet-200 to-pink-200"
+      class="mm-data-card mm-data-card--audio"
       >
       <div class="inline-flex items-center">
         <label
@@ -217,7 +225,7 @@
             class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-pink-500 checked:bg-pink-500 checked:before:bg-pink-500 hover:before:opacity-10"
             id="checkbox-1"
 
-             :value="item" @change="selectId(item, 'audio')"
+             :checked="isCardSelected(item, 'audio')" :value="item" @change="selectId(item, 'audio', $event)"
           />
           <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
             <svg
@@ -293,7 +301,7 @@
       <!-- 图片识别记录 -->
       <li
       v-for="(item, index) in fileDataMap.imageFileDataMap" :key="index"
-      class="p-1 mb-3 items-center justify-center w-full rounded-xl group sm:flex space-x-6  bg-opacity-50 shadow-xl hover:rounded-2xl bg-gradient-to-tr from-sky-200 to-indigo-400"
+      class="mm-data-card mm-data-card--image"
       draggable="true" @dragstart="dragStart($event, item.data || item.fileName)" @dragend="dragEnd"
       >
       <div class="inline-flex items-center">
@@ -307,7 +315,7 @@
             class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-pink-500 checked:bg-pink-500 checked:before:bg-pink-500 hover:before:opacity-10"
             id="checkbox-1"
 
-             :value="item" @change="selectId(item, 'image')"
+             :checked="isCardSelected(item, 'image')" :value="item" @change="selectId(item, 'image', $event)"
           />
           <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
             <svg
@@ -342,7 +350,7 @@
           <div
            class="space-y-4 bg-gray-300 bg-opacity-80 rounded-lg shadow-inner px-3 py-1"
            :title="item.data"
-            draggable="true" @dragstart="dragStart($event, item.transcription)" @dragend="dragEnd"
+            draggable="true" @dragstart="dragStart($event, item.data || item.fileName)" @dragend="dragEnd"
            >
             {{ item.data.length > 30 ? item.data.slice(0, 30) + '...' : item.data }}
           </div>
@@ -373,7 +381,7 @@
       <!-- 数据库图片记录 -->
       <li
       v-for="(item, index) in pictureData" :key="index"
-      class="p-1 mb-3 items-center justify-center w-full rounded-xl group sm:flex space-x-6  bg-opacity-50 shadow-xl hover:rounded-2xl bg-gradient-to-tr from-sky-200 to-indigo-400"
+      class="mm-data-card mm-data-card--image"
       draggable="true" @dragstart="dragStart($event, item.text)" @dragend="dragEnd"
       >
       <div class="inline-flex items-center">
@@ -387,7 +395,7 @@
             class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-pink-500 checked:bg-pink-500 checked:before:bg-pink-500 hover:before:opacity-10"
             id="checkbox-1"
 
-             :value="item" @change="selectId(item, 'image')"
+             :checked="isCardSelected(item, 'image')" :value="item" @change="selectId(item, 'image', $event)"
           />
           <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
             <svg
@@ -453,8 +461,8 @@
       <!-- pdf上传记录 -->
       <li
       v-for="(item, index) in fileDataMap.pdfFileDataMap" :key="index"
-      class="p-1 mb-3 items-center justify-center w-full rounded-xl group sm:flex space-x-6  bg-opacity-50 shadow-xl hover:rounded-2xl bg-gradient-to-tr from-red-200 to-red-400"
-      draggable="true" @dragstart="dragStart($event, item.data)" @dragend="dragEnd"
+      class="mm-data-card mm-data-card--pdf"
+      draggable="true" @dragstart="dragStart($event, item.data || item.fileName)" @dragend="dragEnd"
       >
       <div class="inline-flex items-center">
         <label
@@ -467,7 +475,7 @@
             class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-pink-500 checked:bg-pink-500 checked:before:bg-pink-500 hover:before:opacity-10"
             id="checkbox-1"
 
-             :value="item" @change="selectId(item, 'pdf')"
+             :checked="isCardSelected(item, 'pdf')" :value="item" @change="selectId(item, 'pdf', $event)"
           />
           <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
             <svg
@@ -533,7 +541,7 @@
       <!-- 数据库pdf记录 -->
       <li
       v-for="(item, index) in pdfData" :key="index"
-      class="p-1 mb-3 items-center justify-center w-full rounded-xl group sm:flex space-x-6  bg-opacity-50 shadow-xl hover:rounded-2xl bg-gradient-to-tr from-red-200 to-red-400"
+      class="mm-data-card mm-data-card--pdf"
       draggable="true" @dragstart="dragStart($event, item.text || item.name)" @dragend="dragEnd"
       >
         <div class="inline-flex items-center">
@@ -547,7 +555,7 @@
             class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-pink-500 checked:bg-pink-500 checked:before:bg-pink-500 hover:before:opacity-10"
             id="checkbox-1"
 
-             :value="item" @change="selectId(item, 'pdf')"
+             :checked="isCardSelected(item, 'pdf')" :value="item" @change="selectId(item, 'pdf', $event)"
           />
           <div class="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
             <svg
@@ -911,41 +919,84 @@ export default defineComponent({
     },
 
     async  postData(formData: FormData) {
-        // 使用 axios 发送 POST 请求
         const response = await axios.post('/update_kstar', formData, {
           headers: {
           'Content-Type': 'multipart/form-data',
         },
         });
 
-        // 返回响应的数据
-        return response.data;
+        const payload = response && response.data !== undefined ? response.data : response;
+        return payload && payload.hwdata !== undefined ? payload.hwdata : payload;
       },
 
-    async selectId(item, type: string) {
-      const index = this.selectedIdList.indexOf(item.id);
-      if (index !== -1) {
-        // id已经存在于selectedIdList中，删除它
-        this.selectedIdList.splice(index, 1);
-        console.log('取消');
-      } else {
-        // id不存在于selectedIdList中，添加它
-        this.selectedIdList.push(item.id);
+    getCardId(item) {
+      if (!item) return "";
+      if (Array.isArray(item.Id)) return item.Id[0];
+      return item.id ?? item.Id ?? "";
+    },
 
-        // 创建一个 FormData 对象并添加 id 和 type
-        const formData = new FormData();
-        formData.append('id', item.id);
-        formData.append('type', type);
+    getKnowledgeKey(item, type: string) {
+      return `${type}:${this.getCardId(item)}`;
+    },
 
-        // 发送 POST 请求
-        try {
-          const result = await this.postData(formData);
-          console.log(result);
-        } catch (error) {
-          console.error('Error:', error);
-        }
+    isTruthyStar(value) {
+      return value === true || value === "true" || value === 1 || value === "1";
+    },
+
+    isCardSelected(item, type: string) {
+      const key = this.getKnowledgeKey(item, type);
+      return this.isTruthyStar(item && item.star) || this.selectedIdList.includes(key);
+    },
+
+    setCardSelected(item, type: string, selected: boolean) {
+      const key = this.getKnowledgeKey(item, type);
+      const index = this.selectedIdList.indexOf(key);
+      if (selected && index === -1) {
+        this.selectedIdList.push(key);
       }
-      console.log(this.selectedIdList);
+      if (!selected && index !== -1) {
+        this.selectedIdList.splice(index, 1);
+      }
+      if (item) {
+        item.star = selected ? "true" : "false";
+      }
+    },
+
+    broadcastAgentKnowledgeUpdated(resourceSummary = null) {
+      const detail = { resourceSummary };
+      this.$emit('agent-knowledge-updated', detail);
+      window.dispatchEvent(new CustomEvent('agent-knowledge-updated', { detail }));
+    },
+
+    async selectId(item, type: string, event?: Event) {
+      const cardId = this.getCardId(item);
+      if (!cardId) {
+        console.warn('Cannot sync card without id', item);
+        return;
+      }
+
+      const checkbox = event && event.target as HTMLInputElement;
+      const nextSelected = checkbox ? checkbox.checked : !this.isCardSelected(item, type);
+      const previousSelected = this.isCardSelected(item, type);
+      this.setCardSelected(item, type, nextSelected);
+
+      const formData = new FormData();
+      formData.append('id', String(cardId));
+      formData.append('type', type);
+      formData.append('star', nextSelected ? 'true' : 'false');
+
+      try {
+        const result = await this.postData(formData);
+        const nextStar = result && result.star !== undefined ? this.isTruthyStar(result.star) : nextSelected;
+        this.setCardSelected(item, type, nextStar);
+        this.broadcastAgentKnowledgeUpdated(result && result.resourceSummary ? result.resourceSummary : null);
+      } catch (error) {
+        this.setCardSelected(item, type, previousSelected);
+        if (checkbox) {
+          checkbox.checked = previousSelected;
+        }
+        console.error('Sync agent knowledge failed:', error);
+      }
     },
 
     async deleteItemDataBase(index, type, item) {
@@ -1360,6 +1411,414 @@ export default defineComponent({
 });
   </script>
 <style scoped>
+.mm-mode-switch {
+  font-family: "HarmonyOS Sans SC", "Noto Sans CJK SC", sans-serif;
+}
+
+.mm-mode-switch__shell {
+  border: 1px solid rgba(42, 52, 65, 0.10);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(245, 241, 232, 0.95));
+  box-shadow: 0 10px 26px rgba(31, 42, 55, 0.09);
+}
+
+.mm-mode-switch__track {
+  border: 1px solid rgba(39, 54, 74, 0.10) !important;
+  background: #eee9de !important;
+}
+
+.mm-mode-switch__option {
+  position: relative;
+  z-index: 2;
+  color: #6b7280 !important;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  transition: color 0.15s ease, font-weight 0.15s ease;
+}
+
+.mm-mode-switch__option button {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mm-mode-switch__option--active {
+  color: #244457 !important;
+  font-weight: 800;
+}
+
+.mm-mode-switch__thumb {
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 10px !important;
+  border: 1px solid rgba(31, 42, 55, 0.08);
+  color: #244457 !important;
+  background: linear-gradient(135deg, #ffffff, #f7f1e7) !important;
+  box-shadow: 0 6px 14px rgba(31, 42, 55, 0.12) !important;
+}
+
+.mm-data-center {
+  --panel-ink: #27384a;
+  position: relative;
+  height: 76vh;
+  margin-top: 0.75rem;
+  overflow: auto;
+  white-space: normal;
+  border-radius: 22px;
+  border: 1px solid rgba(40, 52, 68, 0.10);
+  background:
+    radial-gradient(circle at 12% 6%, rgba(37, 111, 130, 0.10), transparent 34%),
+    linear-gradient(145deg, #fbfaf6 0%, #f3f0e9 56%, #edf3f2 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 18px 42px rgba(31, 42, 55, 0.10);
+}
+
+.mm-data-center::before {
+  content: "";
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  display: block;
+  height: 0;
+  pointer-events: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.68);
+}
+
+.mm-data-center--fullscreen {
+  width: 25%;
+  height: 777px;
+  float: left;
+}
+
+.mm-card-stack {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 100%;
+  min-height: 300px;
+  margin: auto;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 18px;
+  transition: all 0.5s ease;
+}
+
+.sort-target {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mm-data-card {
+  --card-accent: #256e8a;
+  --card-accent-dark: #1f566b;
+  --card-accent-soft: rgba(37, 110, 138, 0.12);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  width: 100%;
+  min-height: 106px;
+  overflow: hidden;
+  list-style: none;
+  border-radius: 18px;
+  border: 1px solid rgba(36, 51, 70, 0.10);
+  padding: 12px 12px 12px 14px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(252, 249, 242, 0.90)),
+    linear-gradient(90deg, var(--card-accent-soft), transparent 36%);
+  box-shadow: 0 10px 24px rgba(31, 42, 55, 0.09);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mm-data-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--card-accent), rgba(255, 255, 255, 0));
+}
+
+.mm-data-card::after {
+  content: "";
+  position: absolute;
+  right: 44px;
+  top: 14px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--card-accent);
+  box-shadow: 0 0 0 5px var(--card-accent-soft);
+  pointer-events: none;
+}
+
+.mm-data-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(37, 110, 138, 0.22);
+  box-shadow: 0 14px 30px rgba(31, 42, 55, 0.13);
+}
+
+.mm-data-card--audio {
+  --card-accent: #b85f37;
+  --card-accent-dark: #854225;
+  --card-accent-soft: rgba(184, 95, 55, 0.13);
+}
+
+.mm-data-card--audio::after {
+  content: "";
+}
+
+.mm-data-card--image {
+  --card-accent: #287184;
+  --card-accent-dark: #195669;
+  --card-accent-soft: rgba(40, 113, 132, 0.13);
+  min-height: 116px;
+}
+
+.mm-data-card--image::after {
+  content: "";
+}
+
+.mm-data-card--pdf {
+  --card-accent: #a74343;
+  --card-accent-dark: #813131;
+  --card-accent-soft: rgba(167, 67, 67, 0.13);
+  min-height: 116px;
+}
+
+.mm-data-card--pdf::after {
+  content: "";
+}
+
+.mm-data-card > .inline-flex {
+  flex: 0 0 18px;
+  align-items: flex-start !important;
+  justify-content: center;
+  padding: 3px 0 0 0;
+  z-index: 2;
+}
+
+.mm-data-card input[type="checkbox"] {
+  width: 17px !important;
+  height: 17px !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(44, 62, 80, 0.22) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: 0 4px 12px rgba(31, 42, 55, 0.10);
+}
+
+.mm-data-card input[type="checkbox"]:checked {
+  border-color: var(--card-accent) !important;
+  background: var(--card-accent) !important;
+}
+
+.mm-data-card > img {
+  flex: 0 0 72px;
+  width: 72px !important;
+  height: 86px !important;
+  margin: 2px 0 0 0 !important;
+  object-fit: cover;
+  border-radius: 14px !important;
+  border: 1px solid rgba(31, 42, 55, 0.09);
+  background: #f7f1e6;
+  box-shadow: 0 10px 20px rgba(31, 42, 55, 0.10);
+}
+
+.mm-data-card--pdf > img {
+  object-fit: contain;
+  padding: 13px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(252, 238, 232, 0.92)),
+    var(--card-accent-soft);
+}
+
+.mm-data-card > .relative {
+  flex: 1 1 auto;
+  width: auto !important;
+  min-width: 0;
+  padding: 0 30px 0 0 !important;
+}
+
+.mm-data-card > .relative > button {
+  top: -3px !important;
+  right: -2px !important;
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px !important;
+  color: #7a8794;
+  background: rgba(255, 255, 255, 0.72);
+  transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.mm-data-card > .relative > button:hover {
+  color: #a74343;
+  background: rgba(255, 255, 255, 0.96) !important;
+  transform: rotate(6deg);
+}
+
+.mm-data-card > .relative > .space-y-2 {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mm-data-card .space-y-2 > :not([hidden]) ~ :not([hidden]),
+.mm-data-card .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0 !important;
+}
+
+.mm-data-card > .relative > .space-y-2 > .space-y-4:first-child {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  padding-right: 14px;
+  color: #1f2a37;
+  font-family: "HarmonyOS Sans SC", "Noto Sans CJK SC", sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mm-data-card > .relative > .space-y-2 > .space-y-4:first-child::before {
+  display: inline-block;
+  border-radius: 999px;
+  background: var(--card-accent-soft);
+  color: var(--card-accent-dark);
+  content: "数据";
+  font-family: "HarmonyOS Sans SC", "Noto Sans CJK SC", sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  margin-right: 6px;
+  padding: 2px 6px;
+  vertical-align: 1px;
+}
+
+.mm-data-card--audio > .relative > .space-y-2 > .space-y-4:first-child::before {
+  content: "音频";
+}
+
+.mm-data-card--image > .relative > .space-y-2 > .space-y-4:first-child::before {
+  content: "OCR";
+}
+
+.mm-data-card--pdf > .relative > .space-y-2 > .space-y-4:first-child::before {
+  content: "PDF";
+}
+
+.mm-data-card > .relative > .space-y-2 > div:nth-child(2) {
+  display: -webkit-box;
+  min-height: 34px;
+  max-height: 42px;
+  overflow: hidden;
+  border: 1px solid rgba(39, 54, 74, 0.08);
+  border-radius: 12px !important;
+  color: #314155;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(250, 246, 238, 0.82)) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75) !important;
+  cursor: grab;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 12px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  padding: 7px 9px !important;
+  word-break: break-word;
+}
+
+.mm-data-card > .relative > .space-y-2 > div:nth-child(2):active {
+  cursor: grabbing;
+}
+
+.mm-data-card > .relative > .space-y-2 > .flex {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  min-width: 0;
+  margin-top: 0;
+}
+
+.mm-data-card .text-grey-500 {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 86px;
+  height: auto !important;
+  margin: 0 !important;
+  align-items: center;
+  color: #728092;
+  font-size: 11px;
+}
+
+.mm-data-card .text-grey-500 svg {
+  flex: 0 0 auto;
+  color: var(--card-accent);
+}
+
+.mm-data-card .text-grey-500 p {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mm-data-card .flex-row.relative {
+  flex: 0 0 auto;
+  position: static !important;
+  display: flex !important;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  gap: 6px !important;
+  min-width: 0;
+}
+
+.mm-data-card .flex-row.relative > div {
+  position: static !important;
+  right: auto !important;
+  display: inline-flex !important;
+  min-width: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px !important;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 7px 9px !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.mm-data-card .flex-row.relative > div:first-child {
+  color: #fff !important;
+  background: #223043 !important;
+  box-shadow: 0 10px 20px rgba(34, 48, 67, 0.18) !important;
+}
+
+.mm-data-card .flex-row.relative > div:last-child {
+  border: 1px solid color-mix(in srgb, var(--card-accent) 42%, transparent);
+  color: var(--card-accent-dark) !important;
+  background: var(--card-accent-soft) !important;
+  box-shadow: none !important;
+}
+
+.mm-data-card .flex-row.relative > div:hover {
+  transform: translateY(-1px) !important;
+}
+
+.mm-data-card .text-nowrap {
+  white-space: nowrap;
+}
+
 .charts-center-modal {
   position: fixed;
   inset: 0;
@@ -1380,7 +1839,8 @@ export default defineComponent({
 }
 .ghost {
   opacity: 0.5;
-  background: #c8ebfb;
+  background: rgba(40, 113, 132, 0.14);
+  border-radius: 22px;
 }
 .fade-move,
 .fade-enter-active,
@@ -1415,6 +1875,34 @@ export default defineComponent({
 .slide-fade-enter, .slide-fade-leave-to {
   transform: translateX(100%);
   opacity: 0;
+}
+
+@media (max-width: 768px) {
+  .mm-data-card,
+  .mm-data-card--image,
+  .mm-data-card--pdf {
+    gap: 8px;
+  }
+
+  .mm-data-card > img {
+    flex-basis: 64px;
+    width: 64px !important;
+    height: 78px !important;
+    margin: 2px 0 0 0 !important;
+  }
+
+  .mm-data-card > .relative {
+    padding: 0 28px 0 0 !important;
+  }
+
+  .mm-data-card > .relative > .space-y-2 > .flex {
+    align-items: center !important;
+    flex-direction: row;
+  }
+
+  .mm-data-card .flex-row.relative {
+    justify-content: flex-start;
+  }
 }
 
 </style>
